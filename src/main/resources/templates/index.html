@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>号码过滤工具</title>
+    <script src="static/js/jquery.min.js" type="text/javascript"></script>
+    <script src="static/js/jquery.uploadifive.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/uploadifive.css">
+    <style type="text/css">
+        body {
+            font: 13px Arial, Helvetica, Sans-serif;
+        }
+        .uploadifive-button {
+            float: left;
+            margin-right: 10px;
+        }
+        #queue {
+            border: 1px solid #E5E5E5;
+            height: 177px;
+            overflow: auto;
+            margin-bottom: 10px;
+            padding: 0 3px 3px;
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>号码过滤器</h1>
+<form>
+
+    <div style="margin: 10px 0px;">
+    <select name="areaCode" style="width: 300px;height: 36px;line-height: 34px;" >
+        <option value="10">北京</option>
+        <option value="371">郑州</option>
+    </select>
+    </div>
+    <div id="queue"></div>
+
+    <input id="file_upload" name="uploadFile" type="file" multiple="true">
+    <a href="javascript:;" id="download" style="display: none;">点击下载结果</a>
+
+
+</form>
+
+<script type="text/javascript">
+    $(function() {
+        $('#file_upload').uploadifive({
+            'auto'             : true,
+            'fileObjName' : 'uploadFile',
+            'fileTypeExts' : '*.gif; *.jpg; *.png',
+            'formData': {'areaCode':$('select[name="areaCode"]').val()},
+            'method': 'post',
+            'queueID'          : 'queue',
+            'uploadScript'     : '/phone/upload',
+            'onUploadComplete' : function(file, data) {
+                if(data){
+                    data = JSON.parse(data);
+                    if(data.rcode==0){
+                        $('#download').attr("href","/phone/download?file="+data.data).show();
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+spring:
+  mvc:
+    static-path-pattern: /static/**
+  servlet:
+    multipart:
+      max-file-size: 10MB
+cus:
+  phonePrefix: /apps/phone_cube/data/mobilearea-1152.txt
+  phonePath: /apps/phone_cube/data/area
+  destPath: /apps/phone_cube/data/dest
+logging:
+  level:
+    root: INFO
+    file:
+      max-history: 7
+      max-size: 20MB
