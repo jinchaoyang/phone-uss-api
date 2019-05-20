@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -92,6 +94,7 @@ public class FileUploadService {
     }
 
     public File readXlsx(File sourceFile, String areaCode) throws IOException {
+
         File result = null;
         List<String> phones = loadPrefix(areaCode);
         FileInputStream fis = new FileInputStream(sourceFile);
@@ -108,7 +111,9 @@ public class FileUploadService {
                 Cell cell = row.getCell(0);
                 if (null != cell) {
                     number = getCellValue(row.getCell(0));
-                    prefix = number.substring(0,7);
+                    if(number.length()==11) {
+                        prefix = number.substring(0, 7);
+                    }
                     if(phones.contains(prefix)){
                         data.clear();
                         data.add(number);
@@ -122,16 +127,19 @@ public class FileUploadService {
                 }
             }
         }
+        String destName = sourceFile.getName();
+        destName = destName.substring(0,destName.lastIndexOf("."))+".xlsx";
+        String filePath = properties.getDestPath()+"/"+destName;
+        result = new File(filePath);
+        if(result.exists()){
+            result.delete();
+        }
         if(null!=outWb){
-            String destName = sourceFile.getName();
-            destName = destName.substring(0,destName.lastIndexOf("."))+".xlsx";
-            String filePath = properties.getDestPath()+"/"+destName;
-            result = new File(filePath);
             FileOutputStream fos = new FileOutputStream(result);
             outWb.write(fos);
         }
-        return result;
 
+        return result;
     }
 
 

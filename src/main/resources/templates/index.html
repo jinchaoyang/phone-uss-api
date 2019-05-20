@@ -32,6 +32,18 @@
     <div style="margin: 10px 0px;">
     <select name="areaCode" style="width: 300px;height: 36px;line-height: 34px;" >
         <option value="10">北京</option>
+        <option value="22">天津</option>
+        <option value="316">河北-廊坊市</option>
+        <option value="311">河北-石家庄市</option>
+        <option value="318">河北-衡水市</option>
+        <option value="317">河北-沧州市</option>
+        <option value="314">河北-承德市</option>
+        <option value="313">河北-张家口市</option>
+        <option value="312">河北-保定市</option>
+        <option value="319">河北-邢台市</option>
+        <option value="310">河北-邯郸市</option>
+        <option value="335">河北-秦皇岛市</option>
+        <option value="315">河北-唐山市</option>
         <option value="371">郑州</option>
     </select>
     </div>
@@ -45,11 +57,21 @@
 
 <script type="text/javascript">
     $(function() {
+
+
+        $('select[name="areaCode"]').change(function(){
+            var val = this.value;
+            $('#file_upload').data('uploadifive').settings.formData = { 'areaCode': val};
+            $('#file_upload').uploadifive('upload');
+        });
+
+
+
         $('#file_upload').uploadifive({
             'auto'             : true,
             'fileObjName' : 'uploadFile',
             'fileTypeExts' : '*.gif; *.jpg; *.png',
-            'formData': {'areaCode':$('select[name="areaCode"]').val()},
+            'formData': {'areaCode':'10'},
             'method': 'post',
             'queueID'          : 'queue',
             'uploadScript'     : '/phone/upload',

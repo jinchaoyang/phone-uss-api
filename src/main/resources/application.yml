@@ -8,6 +8,16 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 20000
+    lettuce:
+      pool:
+        max-active: 8
+        min-idle: 0
+        max-idle: 8
+        max-wait: -1
 cus:
   phonePrefix: /apps/phone_cube/data/mobilearea-1152.txt
   phonePath: /apps/phone_cube/data/area
@@ -15,6 +25,7 @@ cus:
 logging:
   level:
     root: INFO
-    file:
-      max-history: 7
-      max-size: 20MB
+  path: ./logs
+  file:
+    max-history: 7
+    max-size: 20MB
