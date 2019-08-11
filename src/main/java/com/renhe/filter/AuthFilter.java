@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 /**
  * 系统拦截器
  */
-@WebFilter
+//@WebFilter
 public class AuthFilter implements Filter {
 
     private final static Logger logger = LoggerFactory.getLogger(AuthFilter.class);
@@ -32,7 +32,6 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String referer = StringUtil.trim(req.getHeader("Referer"));
-        logger.info("request Referer -> {}",referer);
         if(StringUtil.isPresent(referer)){
             //if(StringUtil.isPresent(referer) && referer.equals(".unicss.com")){
             chain.doFilter(request,response);

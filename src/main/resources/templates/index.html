@@ -33,6 +33,7 @@
     <select name="areaCode" style="width: 300px;height: 36px;line-height: 34px;" >
         <option value="10">北京</option>
         <option value="22">天津</option>
+        <option value="XXX">河北</option>
         <option value="316">河北-廊坊市</option>
         <option value="311">河北-石家庄市</option>
         <option value="318">河北-衡水市</option>
@@ -61,6 +62,19 @@
 
         $('select[name="areaCode"]').change(function(){
             var val = this.value;
+            if(val=='XXX'){
+                var _option = $(this).find("option:selected").text();
+                var arr=[];
+                $('option',$(this)).each(function(i,n){
+                   var _text = $.trim(n.innerText);
+                   if(_text && _text!=_option && _text.indexOf(_option)==0){
+                        arr.push(n.value);
+                   }
+                });
+                val = arr.join(",");
+                console.log(val);
+            }
+
             $('#file_upload').data('uploadifive').settings.formData = { 'areaCode': val};
             $('#file_upload').uploadifive('upload');
         });
