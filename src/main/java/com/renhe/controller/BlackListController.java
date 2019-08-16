@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.renhe.base.Result;
 import com.renhe.service.VerifyService;
+import com.renhe.utils.DateUtil;
 import com.renhe.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +28,11 @@ public class BlackListController {
     VerifyService service;
 
 
-
     @PostMapping(value="/check")
     public JSONObject check(HttpServletRequest request, BufferedReader reader){
         String inputLine;
         String str = "";
+        String ip = getIpAddr(request);
         try {
         while ((inputLine = reader.readLine()) != null) {
             str += inputLine;
@@ -42,6 +44,9 @@ public class BlackListController {
 
         JSONObject result = new JSONObject();
         if(StringUtil.isPresent(str)){
+            String today = DateUtil.getToday();
+            service.count(ip,today);
+
             JSONObject json = JSON.parseObject(str);
             String callId = json.getString("callId");
             String callee = json.getString("callee");
@@ -54,12 +59,14 @@ public class BlackListController {
                 boolean isBlack = service.verify(StringUtil.trim(callee));
                 if(isBlack) {
                     result.put("forbid", 1);
+                   service.countBlack(ip,today);
                 }
             }
             result.put("callId",callId);
+
         }
 
-        logger.info("params -> {} ,result -> {}",str,result);
+        logger.info("ip -> {}, params -> {} ,result -> {}",ip,str,result);
         return result;
     }
 
@@ -128,6 +135,36 @@ public class BlackListController {
         return result;
     }
 
+
+    private  String getIpAddr(HttpServletRequest request) {
+        String ip;
+        int index;
+        try {
+            ip = request.getHeader("x-forwarded-for");
+            // Proxy-Client-IP 这个一般是经过apache http服务器的请求才会有，用apache http做代理时一般会加上Proxy-Client-IP请求头，而WL-Proxy-Client-IP是他的weblogic插件加上的头。
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            if(StringUtil.isEmpty(ip)){
+                return "";
+            }
+            index = ip.indexOf(",");
+
+            if(index != -1){
+                return ip.substring(0,index);
+            }else{
+                return ip;
+            }
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
 
 }

@@ -1,8 +1,14 @@
 package com.renhe.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class VerifyService {
@@ -12,7 +18,36 @@ public class VerifyService {
 
     private static final String BLACK_RECORD =  "BLACK_PHONE_LIST";
 
+    private static final String STAT_PREFIX="M_STAT_";
+
+    private static final String STAT_BLACK_PREFIX="M_STAT_BLACK_";
+
     public boolean verify(String phone){
         return redisTemplate.opsForSet().isMember(BLACK_RECORD,phone).booleanValue();
+    }
+
+    public void count(String ip,String key){
+        redisTemplate.opsForHash().increment(STAT_PREFIX+ip,key,1l);
+    }
+
+    public void countBlack(String ip,String key){
+        redisTemplate.opsForHash().increment(STAT_BLACK_PREFIX+ip,key,1l);
+    }
+
+    public JSONArray getAllByDicName(String ip){
+        JSONArray array = new JSONArray();
+        Map<Object,Object> counter =  redisTemplate.opsForHash().entries(STAT_PREFIX+ip);
+        Map<Object,Object> blackCounter =  redisTemplate.opsForHash().entries(STAT_BLACK_PREFIX+ip);
+        Set<Map.Entry<Object,Object>> entrySet = counter.entrySet();
+        for(Map.Entry<Object,Object> entry : entrySet){
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            JSONObject obj = new JSONObject();
+            obj.put("date",key);
+            obj.put("total",value);
+            obj.put("forbid",blackCounter.getOrDefault(key,"0"));
+            array.add(obj);
+        }
+        return array;
     }
 }
