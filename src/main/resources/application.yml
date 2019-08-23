@@ -29,3 +29,5 @@ logging:
   file:
     max-history: 1
     max-size: 20MB
+asr:
+  baidu: https://openapi.baidu.com/oauth/2.0/token
