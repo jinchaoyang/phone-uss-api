@@ -77,6 +77,7 @@ public class BlackListController {
      * @param phone
      * @return
      */
+    @CrossOrigin
     @GetMapping(value="/verify")
     public Result<JSONObject> verify(@RequestParam("phone") String phone){
 

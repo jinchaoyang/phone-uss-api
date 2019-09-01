@@ -4,13 +4,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.renhe.asr.properties.AsrProperties;
 import com.renhe.utils.HttpHelper;
 import com.renhe.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+
 @Component
 public class TokenUtil  {
+
+    private static final Logger logger = LoggerFactory.getLogger(TokenUtil.class);
 
     @Autowired
     AsrProperties asrProperties;
@@ -29,10 +34,13 @@ public class TokenUtil  {
              try {
                 result = HttpHelper.sendPost(baseUrl,(new JSONObject()).toString());
                 if(StringUtil.isPresent(result)){
-                    System.out.println(result);
+                    JSONObject obj = JSONObject.parseObject(result);
+                    if(obj.containsKey("access_token")){
+                        result = obj.getString("access_token");
+                    }
                 }
              } catch (IOException e) {
-                 e.printStackTrace();
+                logger.error("[getToken]: clientId -> {} , clientSecret -> {} ",clientId,clientSecret);
              }
          }
          return result;
