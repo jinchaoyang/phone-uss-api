@@ -18,6 +18,11 @@ spring:
         min-idle: 0
         max-idle: 8
         max-wait: -1
+mybatis:
+  mapper-locations: classpath:mybatis/**/*.xml
+  type-aliases-package: com.petbanny
+  configuration:
+    map-underscore-to-camel-case: true
 cus:
   phonePrefix: /apps/phone_cube/data/mobilearea-1152.txt
   phonePath: /apps/phone_cube/data/area
