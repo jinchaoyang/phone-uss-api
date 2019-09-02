@@ -6,17 +6,18 @@ import com.renhe.base.PagerRS;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper
 @Component
 public interface UserMapper {
 
-    User findByUserNameAndPassword(String userName, String password);
+    User findByUserNameAndPassword(Map<String,Object> params);
 
     User findById(String id);
 
-    User queryByParams(Map<String,Object> params);
+    List<User> queryByParams(Map<String,Object> params);
 
     int save(User user);
 
@@ -24,6 +25,6 @@ public interface UserMapper {
 
     int destroy(String id);
 
-    PagerRS<User> queryPager(Map<String,Object> params,int pageNo,int pageSize);
+
 
 }

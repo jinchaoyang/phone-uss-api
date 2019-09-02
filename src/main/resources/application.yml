@@ -18,6 +18,12 @@ spring:
         min-idle: 0
         max-idle: 8
         max-wait: -1
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/phone_cube
+      username: root
+      password: jinchaoyang2019
 mybatis:
   mapper-locations: classpath:mybatis/**/*.xml
   type-aliases-package: com.petbanny

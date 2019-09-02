@@ -1,14 +1,11 @@
 package com.renhe.auth.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.auth0.jwt.impl.JWTParser;
-import com.renhe.utils.IDUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

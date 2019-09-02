@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.renhe.security.entity.User" >
+<mapper namespace="com.renhe.security.mapper.UserMapper" >
 
     <sql id="baseColumnSql">
         id,name,user_name,password,mobile,status,created_at,updated_at
     </sql>
 
-    <select id="findByUserNameAndPassword" parameterType="string" resultType="com.petbanny.chat.models.AppUser" >
+    <select id="findByUserNameAndPassword" parameterType="map" resultType="com.renhe.security.entity.User" >
        select
        <include refid="baseColumnSql"/>
        from usr_user where user_name = #{userName,jdbcType=VARCHAR} and password = #{password} and status = 'USE' limit 1
+    </select>
+
+
+    <select id="queryByParams" parameterType="map" resultType="com.renhe.security.entity.User" >
+        select
+        <include refid="baseColumnSql"/>
+        from usr_user where  status = 'USE'
     </select>
 
 

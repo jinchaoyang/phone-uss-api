@@ -6,9 +6,12 @@ import com.renhe.base.Result;
 import com.renhe.security.dto.UserDto;
 import com.renhe.security.entity.User;
 import com.renhe.security.service.UserServcie;
+import com.sun.crypto.provider.HmacMD5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,10 +27,10 @@ public class LoginController {
      * 用户登录
      * @return
      */
-    public Result<JSONObject> login(UserDto userDto){
+    @PostMapping(value="/login")
+    public Result<JSONObject> login(@RequestBody UserDto userDto){
         Result<JSONObject> result = new Result<>();
         int rcode = -1;
-
         User user = userServcie.findByUserNameAndPassword(userDto.getUserName(),userDto.getPassword());
         if(null!=user){
             JSONObject obj = new JSONObject();
@@ -36,6 +39,8 @@ public class LoginController {
             JSONObject json = new JSONObject();
             json.put("id",user.getId());
             obj.put("token", TokenUtil.createToken(json.toString(),3600*2*1000));
+            rcode = 0;
+            result.setData(obj);
         }else{
             result.setMessage("用户名或密码错误");
         }
