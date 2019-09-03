@@ -23,7 +23,7 @@ spring:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://127.0.0.1:3306/phone_cube
       username: root
-      password: root #jinchaoyang2019
+      password: jinchaoyang2019
 mybatis:
   mapper-locations: classpath:mybatis/**/*.xml
   type-aliases-package: com.petbanny

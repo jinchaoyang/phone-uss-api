@@ -1,6 +1,9 @@
 package com.renhe.auth.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.renhe.utils.StringUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -43,6 +46,50 @@ public class TokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+
+    /**
+     * 获取token中的subject信息
+     * @param token
+     * @return
+     */
+    public static JSONObject getSubjectInfo(String token){
+        JSONObject result = new JSONObject();
+        Claims claims = parseToken(token);
+        if(null!=claims && StringUtil.isPresent(claims.getSubject())){
+            result = JSON.parseObject(claims.getSubject());
+        }
+        return result;
+    }
+
+    /**
+     * 获取当前登录人的ID信息
+     * @param token
+     * @return
+     */
+    public static String getUserId(String token){
+        JSONObject subject = getSubjectInfo(token);
+        if(subject.containsKey("id")) {
+            return subject.getString("id");
+        }
+        return null;
+    }
+
+
+    /**
+     * 获取当前登录用户的租户信息
+     * @param token
+     * @return
+     */
+    public static String getTenantId(String token){
+        JSONObject subject = getSubjectInfo(token);
+        if(subject.containsKey("tenantId")) {
+            return subject.getString("tenantId");
+        }
+        return null;
+    }
+
+
 
 
     public static void main(String[] args){
