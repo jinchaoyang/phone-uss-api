@@ -1,19 +1,17 @@
 package com.renhe.security.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
 import com.renhe.security.dto.UserDto;
 import com.renhe.security.entity.User;
 import com.renhe.security.service.UserServcie;
-import com.sun.crypto.provider.HmacMD5;
+import com.renhe.utils.MD5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value="/auth")
@@ -27,11 +25,13 @@ public class LoginController {
      * 用户登录
      * @return
      */
+    @CrossOrigin
     @PostMapping(value="/login")
     public Result<JSONObject> login(@RequestBody UserDto userDto){
         Result<JSONObject> result = new Result<>();
         int rcode = -1;
-        User user = userServcie.findByUserNameAndPassword(userDto.getUserName(),userDto.getPassword());
+        String password = MD5.encode(userDto.getUserName()+userDto.getPassword());
+        User user = userServcie.findByUserNameAndPassword(userDto.getUserName(),password);
         if(null!=user){
             JSONObject obj = new JSONObject();
             obj.put("id",user.getId());
@@ -45,6 +45,7 @@ public class LoginController {
             result.setMessage("用户名或密码错误");
         }
         result.setCode(rcode);
+        logger.info("[login]: userDto -> {}, result -> {}", JSON.toJSONString(userDto),JSON.toJSONString(result));
         return result;
     }
 
