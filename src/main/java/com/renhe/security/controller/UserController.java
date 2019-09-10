@@ -66,5 +66,26 @@ public class UserController  {
         return result;
     }
 
+    @DeleteMapping(value="/{id}")
+    public Result<Integer> destroy(@PathVariable String id){
+        Result<Integer> result = new Result<>();
+        int rcode = -1;
+        try{
+            int count = userServcie.destory(id);
+            if(count>0){
+                rcode = 0;
+            }else{
+                result.setMessage("no record found");
+            }
+
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            logger.error("[destroyException]: id -> {}", id,e);
+        }
+        result.setCode(rcode);
+        return result;
+
+    }
+
 
 }

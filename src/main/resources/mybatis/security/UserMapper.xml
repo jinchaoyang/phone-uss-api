@@ -25,6 +25,26 @@
         </if>
     </select>
 
+    <insert id="save" parameterType="com.renhe.security.entity.User">
+         insert into usr_user
+         (
+            id,name,user_name,password,mobile,status,created_at,updated_at
+         )values(
+            #{id},
+            #{name},
+            #{userName},
+            #{password},
+            #{mobile},
+            #{status},
+            #{createdAt},
+            #{updatedAt}
+         )
+    </insert>
+
+    <update id="destroy" parameterType="string">
+        update usr_user set status ='UNUSE' where id = #{id}
+    </update>
+
 
 
 

@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.renhe.security.entity.User;
 import com.renhe.security.mapper.UserMapper;
 import com.renhe.security.vo.UserVo;
+import com.renhe.utils.IDUtil;
+import com.renhe.utils.MD5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,8 +54,20 @@ public class UserServcie  {
      * @return
      */
     public int save(User user){
+        user.setId(IDUtil.generate());
+        user.setStatus("USE");
+        user.setPassword(MD5.encode(user.getUserName()+user.getPassword()));
         return userMapper.save(user);
     }
+
+    /**
+     * 删除用户信息
+     * @param id
+     * @return
+     */
+     public int destory(String id){
+        return userMapper.destroy(id);
+     }
 
 
 
