@@ -21,9 +21,9 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/phone_cube
+      url: jdbc:mysql://127.0.0.1:3306/phone_cube?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
       username: root
-      password: jinchaoyang2019
+      password: root #jinchaoyang2019
 mybatis:
   mapper-locations: classpath:mybatis/**/*.xml
   type-aliases-package: com.petbanny

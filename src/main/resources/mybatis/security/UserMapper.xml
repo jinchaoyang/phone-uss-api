@@ -13,10 +13,16 @@
     </select>
 
 
-    <select id="queryByParams" parameterType="map" resultType="com.renhe.security.entity.User" >
+    <select id="queryByParams" parameterType="com.renhe.security.vo.UserVo" resultType="com.renhe.security.entity.User" >
         select
         <include refid="baseColumnSql"/>
-        from usr_user where  status = 'USE'
+        from usr_user  where  status = 'USE'
+        <if test="userName!=''">
+            and user_name = #{userName}
+        </if>
+        <if test="name!=''">
+            and name like concat('%',#{name},'%')
+        </if>
     </select>
 
 

@@ -2,10 +2,9 @@ package com.renhe.security.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.renhe.base.Pager;
-import com.renhe.base.PagerRS;
 import com.renhe.security.entity.User;
 import com.renhe.security.mapper.UserMapper;
+import com.renhe.security.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,17 +34,25 @@ public class UserServcie  {
 
     /**
      * 分页查询用户信息
-     * @param params
+     * @param vo
      * @param pageNo
      * @param pageSize
      * @return
      */
-    public PageInfo<User> queryPager(Map<String,Object> params,int pageNo,int pageSize){
+    public PageInfo<User> queryPager(UserVo vo, int pageNo, int pageSize){
         PageHelper.startPage(pageNo,pageSize);
-        List<User> userList = userMapper.queryByParams(params);
+        List<User> userList = userMapper.queryByParams(vo);
         PageInfo<User> pageInfo = new PageInfo<>(userList);
         return pageInfo;
+    }
 
+    /**
+     * 保存用户信息
+     * @param user
+     * @return
+     */
+    public int save(User user){
+        return userMapper.save(user);
     }
 
 

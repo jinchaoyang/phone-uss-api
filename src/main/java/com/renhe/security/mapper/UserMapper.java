@@ -3,6 +3,7 @@ package com.renhe.security.mapper;
 
 import com.renhe.security.entity.User;
 import com.renhe.base.PagerRS;
+import com.renhe.security.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ public interface UserMapper {
 
     User findById(String id);
 
-    List<User> queryByParams(Map<String,Object> params);
+    List<User> queryByParams(UserVo vo);
 
     int save(User user);
 
