@@ -1,28 +1,30 @@
-package com.renhe.security.controller;
-
+package com.renhe.tenant.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.renhe.base.Result;
-import com.renhe.security.entity.User;
-import com.renhe.security.service.UserServcie;
-import com.renhe.security.vo.UserVo;
+import com.renhe.tenant.entity.Tenant;
+import com.renhe.tenant.service.TenantProductService;
+import com.renhe.tenant.service.TenantService;
+import com.renhe.tenant.vo.TenantVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
-
 @CrossOrigin
 @RestController
-@RequestMapping(value="/user")
-public class UserController  {
+@RequestMapping(value="/tenant")
+public class TenantController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(TenantController.class);
 
     @Autowired
-    UserServcie userServcie;
+    TenantService tenantService;
+
+    @Autowired
+    TenantProductService tenantProductService;
 
     /**
      * 用户信息列表
@@ -32,12 +34,12 @@ public class UserController  {
      * @return
      */
     @GetMapping(value="/list")
-    public Result<PageInfo<User>> index(UserVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
-        Result<PageInfo<User>> result = new Result<>();
+    public Result<PageInfo<Tenant>> index(TenantVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
+        Result<PageInfo<Tenant>> result = new Result<>();
         int rcode = -1;
-        PageInfo<User> userPageInfo = userServcie.queryPager(query,pageNo,pageSize);
-        if(null!=userPageInfo){
-            result.setData(userPageInfo);
+        PageInfo<Tenant> tenantPageInfo = tenantService.queryPager(query,pageNo,pageSize);
+        if(null!=tenantPageInfo){
+            result.setData(tenantPageInfo);
             rcode =  0 ;
         }else{
             result.setMessage("no record");
@@ -47,20 +49,20 @@ public class UserController  {
     }
 
     /**
-     * 创建用户信息
-     * @param user
+     * 创建租户信息
+     * @param tenant
      * @return
      */
     @PostMapping("")
-    public Result<Integer> save(@RequestBody User user){
+    public Result<Integer> save(@RequestBody Tenant tenant){
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            userServcie.save(user);
+            tenantService.save(tenant);
             rcode = 0;
         }catch(Exception e){
             result.setMessage(e.getMessage());
-            logger.error("[saveException]: user -> {}", JSON.toJSONString(user),e);
+            logger.error("[saveException]: tenant -> {}", JSON.toJSONString(tenant),e);
         }
         result.setCode(rcode);
         return result;
@@ -72,20 +74,20 @@ public class UserController  {
      * @return
      */
     @GetMapping(value="/{id}")
-    public Result<User> findById(@PathVariable String id){
-        Result<User> result = new Result<>();
+    public Result<Tenant> findById(@PathVariable String id){
+        Result<Tenant> result = new Result<>();
         int rcode = -1;
         try{
-            User user = userServcie.findById(id);
-            if(null!=user){
+            Tenant tenant = tenantService.findById(id);
+            if(null!=tenant){
                 rcode = 0;
-                result.setData(user);
+                result.setData(tenant);
                 result.setMessage("success");
             }else{
-                result.setMessage("user not exists.");
+                result.setMessage("tenant not exists.");
             }
         }catch(Exception e){
-            logger.error("[findUserException]: id -> {}",id,e);
+            logger.error("[findTenantException]: id -> {}",id,e);
         }
         result.setCode(rcode);
         return result;
@@ -94,24 +96,24 @@ public class UserController  {
 
     /**
      * 更新对象信息
-     * @param user
+     * @param tenant
      * @return
      */
     @PutMapping(value="/{id}")
-    public Result<Integer> update(@RequestBody User user){
+    public Result<Integer> update(@RequestBody Tenant tenant){
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            int count = userServcie.update(user);
+            int count = tenantService.update(tenant);
             if(count>0){
                 rcode = 0;
                 result.setData(count);
                 result.setMessage("success");
             }else{
-                result.setMessage("user not exists");
+                result.setMessage("tenant not exists");
             }
         }catch(Exception e){
-            logger.error("[updateException]: user -> {}",JSON.toJSONString(user),e);
+            logger.error("[updateException]: tenant -> {}",JSON.toJSONString(tenant),e);
             result.setMessage(e.getMessage());
         }
         result.setCode(rcode);
@@ -130,7 +132,7 @@ public class UserController  {
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            int count = userServcie.destroy(id);
+            int count = tenantService.destroy(id);
             if(count>0){
                 rcode = 0;
             }else{
@@ -145,6 +147,8 @@ public class UserController  {
         return result;
 
     }
+
+
 
 
 }

@@ -13,6 +13,13 @@
     </select>
 
 
+    <select id="findById" parameterType="string" resultType="com.renhe.security.entity.User" >
+        select
+        <include refid="baseColumnSql"/>
+        from usr_user where id = #{id}
+    </select>
+
+
     <select id="queryByParams" parameterType="com.renhe.security.vo.UserVo" resultType="com.renhe.security.entity.User" >
         select
         <include refid="baseColumnSql"/>
@@ -45,6 +52,21 @@
         update usr_user set status ='UNUSE' where id = #{id}
     </update>
 
+    <update id="update" parameterType="com.renhe.security.entity.User">
+        update usr_user
+        <set>
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="password!=null">
+                password = #{password},
+            </if>
+            <if test="mobile!=null">
+                mobile = #{mobile},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 
 
 

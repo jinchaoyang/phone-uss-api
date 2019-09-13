@@ -65,9 +65,28 @@ public class UserServcie  {
      * @param id
      * @return
      */
-     public int destory(String id){
+     public int destroy(String id){
         return userMapper.destroy(id);
      }
+
+    /**
+     * 根据ID查询用户信息
+     * @param id
+     * @return
+     */
+     public User findById(String id){
+         return userMapper.findById(id);
+     }
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @return
+     */
+     public int update(User user){
+         return userMapper.update(user);
+     }
+
 
 
 

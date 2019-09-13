@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.renhe.tenant.mapper.TenantProductMapper" >
+
+
+    <sql id="baseColumnSql">
+        id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at
+    </sql>
+
+    <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.TenantProduct" >
+       select
+       <include refid="baseColumnSql"/>
+       from acc_account_product
+       where id = #{id}
+    </select>
+
+
+    <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantProductVo" resultType="com.renhe.tenant.entity.TenantProduct" >
+        select
+        <include refid="baseColumnSql"/>
+        from acc_account_product
+        where  tenant_id is not null
+        <if test="tenantId!=''">
+            and tenant_id= #{tenantId}
+        </if>
+        <if test="productType!=''">
+            and product_type = #{productType}
+        </if>
+        <if test="feeType!=''">
+            and fee_type = #{feeType}
+        </if>
+
+    </select>
+
+    <insert id="save" parameterType="com.renhe.tenant.entity.TenantProduct">
+         insert into acc_tenant_product
+         (
+           id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at
+         )values(
+            #{id},
+            #{tenantId},
+            #{productType},
+            #{feeType},
+            #{fee},
+            #{expireAt},
+            #{creatorId},
+            #{operatorId},
+            #{createdAt},
+            #{updatedAt}
+         )
+    </insert>
+
+
+
+    <update id="update" parameterType="com.renhe.tenant.entity.TenantProduct">
+        update acc_tenant_product
+        <set>
+            <if test="fee!=null">
+                fee = #{fee},
+            </if>
+            <if test="feeType!=null">
+                fee_type = #{feeType},
+            </if>
+            <if test="expireAt!=null">
+                expire_at = #{expireAt},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+
+</mapper>

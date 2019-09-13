@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.renhe.tenant.mapper.TenantMapper" >
+
+
+    <sql id="baseColumnSql">
+        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at
+    </sql>
+
+    <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.Tenant" >
+       select
+       <include refid="baseColumnSql"/>
+       from acc_account
+       where id = #{id}
+    </select>
+
+
+    <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantVo" resultType="com.renhe.tenant.entity.Tenant" >
+        select
+        <include refid="baseColumnSql"/>
+        from acc_account  where  status !='0'
+        <if test="tenantCode!=''">
+            and tenant_code = #{tenantCode}
+        </if>
+        <if test="name!=''">
+            and name like concat('%',#{name},'%')
+        </if>
+        <if test="contactName!=''">
+            and contact_name like concat('%',#{contactName},'%')
+        </if>
+        <if test="contactPhone!=''">
+            and contact_phone = #{contactPhone}
+        </if>
+        <if test="email!=''">
+            and email = #{email}
+        </if>
+        <if test="status!=null">
+            and status = #{status}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.renhe.tenant.entity.Tenant">
+         insert into acc_tenant
+         (
+            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at
+         )values(
+            #{id},
+            #{tenantCode},
+            #{name},
+            #{contactName},
+            #{contactPhone},
+            #{address},
+            #{remark},
+            #{status},
+            #{creatorId},
+            #{operatorId},
+            #{createdAt},
+            #{updatedAt}
+         )
+    </insert>
+
+    <update id="destroy" parameterType="string">
+        update acc_account set status ='0' where id = #{id}
+    </update>
+
+    <update id="update" parameterType="com.renhe.tenant.entity.Tenant">
+        update acc_tenant
+        <set>
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="contactName!=null">
+                contact_name = #{contactName},
+            </if>
+            <if test="contactPhone!=null">
+                contact_phone = #{contactPhone},
+            </if>
+            <if test="address!=null">
+                address = #{address},
+            </if>
+            <if test="remark!=null">
+                remark = #{remark},
+            </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
+            <if test="operatorId!=null">
+                operator_id = #{operatorId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+
+
+</mapper>
