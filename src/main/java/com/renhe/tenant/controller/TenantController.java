@@ -23,8 +23,7 @@ public class TenantController {
     @Autowired
     TenantService tenantService;
 
-    @Autowired
-    TenantProductService tenantProductService;
+
 
     /**
      * 用户信息列表
