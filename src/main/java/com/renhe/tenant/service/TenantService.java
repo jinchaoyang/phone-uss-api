@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.renhe.tenant.entity.Tenant;
 import com.renhe.tenant.mapper.TenantMapper;
 import com.renhe.tenant.vo.TenantVo;
+import com.renhe.utils.IDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ public class TenantService {
     }
 
     public int save(Tenant tenant){
+        tenant.setId(IDUtil.generate());
+        tenant.setStatus("1");
         return tenantMapper.save(tenant);
     }
 

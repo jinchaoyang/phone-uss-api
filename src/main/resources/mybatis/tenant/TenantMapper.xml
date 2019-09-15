@@ -10,7 +10,7 @@
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.Tenant" >
        select
        <include refid="baseColumnSql"/>
-       from acc_account
+       from acc_tenant
        where id = #{id}
     </select>
 
@@ -18,23 +18,21 @@
     <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantVo" resultType="com.renhe.tenant.entity.Tenant" >
         select
         <include refid="baseColumnSql"/>
-        from acc_account  where  status !='0'
+        from acc_tenant  where  status !='0'
         <if test="tenantCode!=''">
             and tenant_code = #{tenantCode}
         </if>
         <if test="name!=''">
             and name like concat('%',#{name},'%')
         </if>
-        <if test="contactName!=''">
+        <if test="contactName!='' and contactName != null ">
             and contact_name like concat('%',#{contactName},'%')
         </if>
-        <if test="contactPhone!=''">
-            and contact_phone = #{contactPhone}
-        </if>
-        <if test="email!=''">
+
+        <if test="email!='' and email != null">
             and email = #{email}
         </if>
-        <if test="status!=null">
+        <if test="status!=null and status != null">
             and status = #{status}
         </if>
     </select>
@@ -49,6 +47,7 @@
             #{name},
             #{contactName},
             #{contactPhone},
+            #{email},
             #{address},
             #{remark},
             #{status},
@@ -60,7 +59,7 @@
     </insert>
 
     <update id="destroy" parameterType="string">
-        update acc_account set status ='0' where id = #{id}
+        update acc_tenant set status ='0' where id = #{id}
     </update>
 
     <update id="update" parameterType="com.renhe.tenant.entity.Tenant">
