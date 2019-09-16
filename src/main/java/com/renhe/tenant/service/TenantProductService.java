@@ -2,6 +2,8 @@ package com.renhe.tenant.service;
 
 import com.renhe.tenant.entity.TenantProduct;
 import com.renhe.tenant.mapper.TenantProductMapper;
+import com.renhe.tenant.vo.TenantProductVo;
+import com.renhe.utils.IDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,9 @@ public class TenantProductService {
 
 
     public List<TenantProduct> findByTenantId(String tenantId){
-        return tenantProductMapper.findByTenantId(tenantId);
+        TenantProductVo vo = new TenantProductVo();
+        vo.setTenantId(tenantId);
+        return this.queryByParams(vo);
     }
 
     TenantProduct findByTenantIdAndType(String tenantId,String type){
@@ -23,6 +27,7 @@ public class TenantProductService {
     }
 
     public  int save(TenantProduct tenantProduct){
+        tenantProduct.setId(IDUtil.generate());
         return tenantProductMapper.save(tenantProduct);
     }
 
@@ -36,6 +41,10 @@ public class TenantProductService {
 
     public  TenantProduct findById(String id){
         return tenantProductMapper.findById(id);
+    }
+
+    public List<TenantProduct> queryByParams(TenantProductVo vo){
+        return tenantProductMapper.queryByParams(vo);
     }
 
 }

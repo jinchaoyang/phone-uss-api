@@ -62,6 +62,21 @@ public class TenantProduct implements Serializable {
      */
     private Date updatedAt;
 
+    /**
+     * 厂商
+     * 1：baidu
+     * 2: 科大讯飞
+     * 3: ali
+     */
+    private String vendor;
+
+    /**
+     * 状态
+     * 0：禁用
+     * 1：启用
+     */
+    private String status;
+
 
     public String getId() {
         return id;
@@ -141,5 +156,21 @@ public class TenantProduct implements Serializable {
 
     public void setFee(Integer fee) {
         this.fee = fee;
+    }
+
+    public String getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

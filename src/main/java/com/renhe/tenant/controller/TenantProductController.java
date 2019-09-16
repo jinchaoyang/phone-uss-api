@@ -27,14 +27,14 @@ public class TenantProductController {
      * @return
      */
     @PostMapping(value="")
-    public Result<Integer> save(@RequestBody TenantProduct tenantProduct){
-        Result<Integer> result = new Result<>();
+    public Result<TenantProduct> save(@RequestBody TenantProduct tenantProduct){
+        Result<TenantProduct> result = new Result<>();
         int rcode = -1;
         try{
             int count = tenantProductService.save(tenantProduct);
             if(count>0){
                 rcode = 0;
-                result.setData(count);
+                result.setData(tenantProduct);
             }else{
                 result.setMessage("tenantProduct save failed!");
             }

@@ -42,6 +42,8 @@ create table acc_tenant_product(
   fee_type varchar(16) not null comment '计费类型',
   fee int(8) not null comment '费率，单位分',
   expire_at varchar(18) default null comment '过期时间',
+  vendor varchar(2) default null comment '接口厂商，1：百度 2：科大讯飞 3：阿里云',
+  status varchar(8) not null comment '状态，1：可用 0：不可用',
   creator_id varchar(32) default null comment '创建人',
   operator_id varchar(32) default null comment '最近操作人',
   created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',

@@ -4,13 +4,13 @@
 
 
     <sql id="baseColumnSql">
-        id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at
+        id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at,status,vendor
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.TenantProduct" >
        select
        <include refid="baseColumnSql"/>
-       from acc_account_product
+       from acc_tenant_product
        where id = #{id}
     </select>
 
@@ -18,15 +18,15 @@
     <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantProductVo" resultType="com.renhe.tenant.entity.TenantProduct" >
         select
         <include refid="baseColumnSql"/>
-        from acc_account_product
+        from acc_tenant_product
         where  tenant_id is not null
-        <if test="tenantId!=''">
+        <if test="tenantId!=null">
             and tenant_id= #{tenantId}
         </if>
-        <if test="productType!=''">
+        <if test="productType!=null">
             and product_type = #{productType}
         </if>
-        <if test="feeType!=''">
+        <if test="feeType!=null">
             and fee_type = #{feeType}
         </if>
 
@@ -35,7 +35,7 @@
     <insert id="save" parameterType="com.renhe.tenant.entity.TenantProduct">
          insert into acc_tenant_product
          (
-           id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at
+           id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at,status,vendor
          )values(
             #{id},
             #{tenantId},
@@ -46,7 +46,9 @@
             #{creatorId},
             #{operatorId},
             #{createdAt},
-            #{updatedAt}
+            #{updatedAt},
+            #{status},
+            #{vendor}
          )
     </insert>
 
@@ -63,6 +65,12 @@
             </if>
             <if test="expireAt!=null">
                 expire_at = #{expireAt},
+            </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
+            <if test="vendor!=null">
+                vendor = #{vendor},
             </if>
 
         </set>

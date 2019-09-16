@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.renhe.base.Result;
 import com.renhe.tenant.entity.Tenant;
-import com.renhe.tenant.service.TenantProductService;
 import com.renhe.tenant.service.TenantService;
 import com.renhe.tenant.vo.TenantVo;
 import org.slf4j.Logger;
