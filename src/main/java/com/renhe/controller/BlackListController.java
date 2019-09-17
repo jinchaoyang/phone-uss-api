@@ -108,6 +108,7 @@ public class BlackListController {
      * @param phones
      * @return
      */
+    @CrossOrigin
     @GetMapping(value="/batchVerify")
     public Result<JSONObject> batchVerify(@RequestParam("phones")String phones){
         Result<JSONObject> result = new Result<>();
@@ -116,8 +117,9 @@ public class BlackListController {
             result.setCode(-1);
         }else{
             try {
+                phones = phones.replace("\n",",");
                 String[] arr = phones.split(",");
-                JSONObject obj = new JSONObject();
+                JSONObject obj = new JSONObject(true);
                 for (String phone : arr) {
                     if(StringUtil.isPresent(phone)) {
                         boolean isBlack = service.verify(phone);
