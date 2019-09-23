@@ -47,6 +47,11 @@ public class User implements Serializable {
      */
     private Date updatedAt;
 
+    /**
+     * 角色名称
+     */
+    private String role;
+
 
     public String getId() {
         return id;
@@ -110,5 +115,13 @@ public class User implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

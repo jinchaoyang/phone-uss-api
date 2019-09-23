@@ -6,6 +6,7 @@ create table usr_user(
  password varchar(64) default null comment '密码',
  mobile varchar(12) default null comment '手机号',
  status varchar(8) not null comment '状态,USE:可用,UNUSE: 不可用,LOCKED: 锁定 ',
+ role varchar(8) not null comment '角色，1：系统管理员',
  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
  updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
  primary key(id)

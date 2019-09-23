@@ -3,7 +3,7 @@
 <mapper namespace="com.renhe.security.mapper.UserMapper" >
 
     <sql id="baseColumnSql">
-        id,name,user_name,password,mobile,status,created_at,updated_at
+        id,name,user_name,password,mobile,status,created_at,updated_at,role
     </sql>
 
     <select id="findByUserNameAndPassword" parameterType="map" resultType="com.renhe.security.entity.User" >
@@ -35,7 +35,7 @@
     <insert id="save" parameterType="com.renhe.security.entity.User">
          insert into usr_user
          (
-            id,name,user_name,password,mobile,status,created_at,updated_at
+            id,name,user_name,password,mobile,status,created_at,updated_at,role
          )values(
             #{id},
             #{name},
@@ -44,7 +44,8 @@
             #{mobile},
             #{status},
             #{createdAt},
-            #{updatedAt}
+            #{updatedAt},
+            #{role}
          )
     </insert>
 
@@ -63,6 +64,9 @@
             </if>
             <if test="mobile!=null">
                 mobile = #{mobile},
+            </if>
+            <if test="role!=null">
+                role = #{role},
             </if>
         </set>
         where id = #{id}
