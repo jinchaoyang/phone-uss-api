@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -166,6 +168,33 @@ public class BlackListController {
             }
         } catch (Exception e) {
             return "";
+        }
+    }
+
+
+    @CrossOrigin
+    @PostMapping(value="/upload")
+    public String upload(MultipartFile uploadFile){
+        JSONObject obj = new JSONObject();
+        int rcode = 0;
+        String message = null;
+        File destFile = new File("/tmp/"+uploadFile.getOriginalFilename());
+        try {
+            uploadFile.transferTo(destFile);
+            if(destFile.exists()) {
+               long count =  service.uploadBlackRecord(destFile);
+                obj.put("data",count);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            rcode = -1;
+            message = e.getMessage();
+        }finally{
+            destFile.delete();
+            obj.put("rcode",rcode);
+            obj.put("message",message);
+            logger.info("[upload]: fileName -> {}, result -> {}",uploadFile.getOriginalFilename(),JSON.toJSONString(obj));
+            return obj.toString();
         }
     }
 

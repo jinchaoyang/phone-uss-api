@@ -25,9 +25,7 @@ public class ImportTask implements Callable {
 
     @Override
     public Object call() throws Exception {
-       long size =  redisTemplate.opsForSet().size(BLACK_RECORD);
-       logger.info("black record size -->"+size);
-        return null;
+       return  redisTemplate.opsForSet().add(BLACK_RECORD,"");
     }
 
 

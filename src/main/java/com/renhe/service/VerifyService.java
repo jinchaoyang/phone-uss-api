@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,5 +50,20 @@ public class VerifyService {
             array.add(obj);
         }
         return array;
+    }
+
+
+    public long uploadBlackRecord(File targetFile) throws IOException {
+        BufferedReader in  = new BufferedReader(new FileReader(targetFile));
+        String line = null;
+        long result = 0l;
+        while((line = in.readLine())!=null){
+            if(StringUtil.isPresent(line)){
+                line = StringUtil.trim(line);
+                result = redisTemplate.opsForSet().add(BLACK_RECORD,line);
+            }
+        }
+        return result;
+
     }
 }
