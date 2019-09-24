@@ -77,6 +77,16 @@ public class TenantProduct implements Serializable {
      */
     private String status;
 
+    /**
+     * 账户ID
+     */
+    private String appId;
+
+    /**
+     * 密钥
+     */
+    private String appKey;
+
 
     public String getId() {
         return id;
@@ -172,5 +182,21 @@ public class TenantProduct implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
     }
 }

@@ -8,21 +8,21 @@ import java.io.Serializable;
 public class TenantSetting implements Serializable {
 
     /**
-     * 租户ID
+     * 主键，同租户ID
      */
-    private String tenantId;
+    private String id;
 
     /**
      * IP地址
      */
     private String ip;
 
-    public String getTenantId() {
-        return tenantId;
+    public String getId() {
+        return id;
     }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getIp() {

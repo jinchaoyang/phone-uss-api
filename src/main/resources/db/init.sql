@@ -45,6 +45,8 @@ create table acc_tenant_product(
   expire_at varchar(18) default null comment '过期时间',
   vendor varchar(2) default null comment '接口厂商，1：百度 2：科大讯飞 3：阿里云',
   status varchar(8) not null comment '状态，1：可用 0：不可用',
+  app_id varchar(64) default null comment 'APPID',
+  app_key varchar(128) default null comment '密钥',
   creator_id varchar(32) default null comment '创建人',
   operator_id varchar(32) default null comment '最近操作人',
   created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
@@ -52,6 +54,18 @@ create table acc_tenant_product(
   primary key(id),
   key idx_teant_id_tenant_product (tenant_id)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+drop table acc_tenant_setting;
+create table acc_tenant_setting(
+  id varchar(32) not null comment '主键,同租户ID',
+  ip varchar(64) not null comment 'IP地址',
+  primary key(id)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+
+
 
 
 
