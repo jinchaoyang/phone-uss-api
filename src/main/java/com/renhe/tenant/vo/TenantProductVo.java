@@ -13,6 +13,8 @@ public class TenantProductVo implements Serializable {
 
     private String feeType;
 
+    private String status;
+
     public String getTenantId() {
         return tenantId;
     }
@@ -35,5 +37,13 @@ public class TenantProductVo implements Serializable {
 
     public void setFeeType(String feeType) {
         this.feeType = feeType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -29,6 +29,9 @@
         <if test="feeType!=null">
             and fee_type = #{feeType}
         </if>
+        <if test="status!=null">
+            and status = #{status}
+        </if>
 
     </select>
 
