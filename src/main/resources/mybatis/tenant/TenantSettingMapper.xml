@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.renhe.tenant.mapper.TenantSettingMapper" >
+
+
+    <sql id="baseColumnSql">
+        id,ip
+    </sql>
+
+    <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.TenantSetting" >
+       select
+       <include refid="baseColumnSql"/>
+       from acc_tenant_setting
+       where  id  = #{id}
+
+    </select>
+
+
+    <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantSettingVo" resultType="com.renhe.tenant.entity.TenantSetting" >
+        select
+        <include refid="baseColumnSql"/>
+        from acc_tenant_setting
+        where  id is not null
+        <if test="id !=null">
+            and id = #{id}
+        </if>
+
+
+    </select>
+
+    <insert id="save" parameterType="com.renhe.tenant.entity.TenantProduct">
+         insert into acc_tenant_setting
+         (
+           id,ip
+         )values(
+            #{id},
+            #{ip}
+         )
+    </insert>
+
+
+
+    <update id="update" parameterType="com.renhe.tenant.entity.TenantSetting">
+        update acc_tenant_setting
+        <set>
+            <if test="ip!=null">
+                ip = #{ip},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+</mapper>

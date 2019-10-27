@@ -47,4 +47,12 @@ public class TenantProductService {
         return tenantProductMapper.queryByParams(vo);
     }
 
+    public List<TenantProduct> queryBlackFilterProduct(){
+        TenantProductVo vo = new TenantProductVo();
+        vo.setProductType("1001");
+        vo.setStatus("1");
+        return this.queryByParams(vo);
+    }
+
+
 }

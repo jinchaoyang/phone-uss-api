@@ -4,7 +4,7 @@
 
 
     <sql id="baseColumnSql">
-        id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at,status,vendor
+        id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at,status,vendor,app_id,app_key
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.TenantProduct" >
@@ -29,13 +29,16 @@
         <if test="feeType!=null">
             and fee_type = #{feeType}
         </if>
+        <if test="status!=null">
+            and status = #{status}
+        </if>
 
     </select>
 
     <insert id="save" parameterType="com.renhe.tenant.entity.TenantProduct">
          insert into acc_tenant_product
          (
-           id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at,status,vendor
+           id,tenant_id,product_type,fee_type,fee,expire_at,creator_id,operator_id,created_at,updated_at,status,vendor,app_id,app_key
          )values(
             #{id},
             #{tenantId},
@@ -48,7 +51,9 @@
             #{createdAt},
             #{updatedAt},
             #{status},
-            #{vendor}
+            #{vendor},
+            #{appId},
+            #{appKey}
          )
     </insert>
 
@@ -71,6 +76,12 @@
             </if>
             <if test="vendor!=null">
                 vendor = #{vendor},
+            </if>
+            <if test="appId!=null">
+                app_id = #{appId},
+            </if>
+            <if test="appKey!=null">
+                app_key = #{appKey},
             </if>
 
         </set>

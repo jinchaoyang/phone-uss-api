@@ -23,4 +23,5 @@ public interface TenantProductMapper {
 
     List<TenantProduct> queryByParams(TenantProductVo vo);
 
+
 }

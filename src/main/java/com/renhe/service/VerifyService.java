@@ -23,6 +23,11 @@ public class VerifyService {
 
     private static final String STAT_BLACK_PREFIX="M_STAT_BLACK_";
 
+
+    private static final String VIP_RECORD =  "VIP_PHONE_LIST";
+
+    private static final String STAT_VIP_PREFIX="M_STAT_VIP_";
+
     public boolean verify(String phone){
         return redisTemplate.opsForSet().isMember(BLACK_RECORD,phone).booleanValue();
     }
@@ -66,4 +71,15 @@ public class VerifyService {
         return result;
 
     }
+
+
+    public boolean verifyVip(String phone){
+        return redisTemplate.opsForSet().isMember(VIP_RECORD,phone).booleanValue();
+    }
+
+
+    public void countVip(String ip,String key){
+        redisTemplate.opsForHash().increment(STAT_VIP_PREFIX+ip,key,1l);
+    }
+
 }

@@ -199,4 +199,44 @@ public class BlackListController {
     }
 
 
+    @RequestMapping(value="/valid")
+    @CrossOrigin
+    public JSONObject valid(@RequestBody  JSONObject json,HttpServletRequest request){
+        String ip = getIpAddr(request);
+        JSONObject result = new JSONObject();
+        String today = DateUtil.getToday();
+            service.count(ip,today);
+            String callId = json.getString("callId");
+            String callee = json.getString("callee");
+            String type = json.getString("type");
+            if(!StringUtil.isPresent(type)){
+                type = "0";
+            }
+            if(StringUtil.isPresent(callee)) {
+                callee = StringUtil.trim(callee);
+                if(callee.length()>11){
+                    callee = callee.substring(callee.length()-11);
+                }
+                if(type.equals("0")) {
+                    boolean isBlack = service.verify(StringUtil.trim(callee));
+                    if (isBlack) {
+                        result.put("forbid", 1);
+                        service.countBlack(ip, today);
+                    }
+                }else{
+                    boolean isVip = service.verifyVip(StringUtil.trim(callee));
+                    if (!isVip) {
+                        result.put("forbid", 1);
+                        service.countVip(ip, today);
+                    }
+                }
+            }
+            result.put("callId",callId);
+
+        logger.info("ip -> {}, json -> {} ,result -> {}",json.toString(),result);
+        return result;
+
+    }
+
+
 }
