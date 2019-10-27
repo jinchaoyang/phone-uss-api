@@ -112,7 +112,7 @@ public class BlackListController {
      */
     @CrossOrigin
     @GetMapping(value="/batchVerify")
-    public Result<JSONObject> batchVerify(@RequestParam("phones")String phones){
+    public Result<JSONObject> batchVerify(@RequestParam("phones")String phones,@RequestParam("type") int type){
         Result<JSONObject> result = new Result<>();
         if(!StringUtil.isPresent(phones)){
             result.setMessage("必要参数不能为空");
@@ -124,8 +124,14 @@ public class BlackListController {
                 JSONObject obj = new JSONObject(true);
                 for (String phone : arr) {
                     if(StringUtil.isPresent(phone)) {
-                        boolean isBlack = service.verify(phone);
-                        obj.put(phone, isBlack?1:0);
+                        if(type==0) {
+                            boolean isBlack = service.verify(phone);
+                            obj.put(phone, isBlack?1:0);
+                        }else{
+                            boolean isVip = service.verifyVip(phone);
+                            obj.put(phone, isVip?1:0);
+                        }
+
                     }
                 }
                 result.setCode(0);
@@ -174,7 +180,8 @@ public class BlackListController {
 
     @CrossOrigin
     @PostMapping(value="/upload")
-    public String upload(MultipartFile uploadFile){
+    public String upload(MultipartFile uploadFile,HttpServletRequest request){
+        String type = request.getParameter("type");
         JSONObject obj = new JSONObject();
         int rcode = 0;
         String message = null;
@@ -182,8 +189,13 @@ public class BlackListController {
         try {
             uploadFile.transferTo(destFile);
             if(destFile.exists()) {
-               long count =  service.uploadBlackRecord(destFile);
-                obj.put("data",count);
+                if("0".equals(type)) {
+                    long count = service.uploadBlackRecord(destFile);
+                    obj.put("data", count);
+                }else{
+                    long count = service.uploadVipRecord(destFile);
+                    obj.put("data", count);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
