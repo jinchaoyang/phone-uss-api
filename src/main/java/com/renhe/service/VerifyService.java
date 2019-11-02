@@ -82,4 +82,19 @@ public class VerifyService {
         redisTemplate.opsForHash().increment(STAT_VIP_PREFIX+ip,key,1l);
     }
 
+
+    public long uploadVipRecord(File targetFile) throws IOException {
+        BufferedReader in  = new BufferedReader(new FileReader(targetFile));
+        String line = null;
+        long result = 0l;
+        while((line = in.readLine())!=null){
+            if(StringUtil.isPresent(line)){
+                line = StringUtil.trim(line);
+                result = redisTemplate.opsForSet().add(VIP_RECORD,line);
+            }
+        }
+        return result;
+
+    }
+
 }
