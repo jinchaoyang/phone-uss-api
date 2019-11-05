@@ -3,7 +3,11 @@ package com.renhe.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.renhe.base.Result;
+import com.renhe.cdr.vo.BlackRecordVo;
 import com.renhe.service.VerifyService;
+import com.renhe.tenant.entity.TenantSetting;
+import com.renhe.tenant.service.TenantService;
+import com.renhe.tenant.service.TenantSettingService;
 import com.renhe.utils.DateUtil;
 import com.renhe.utils.StringUtil;
 import org.slf4j.Logger;
@@ -29,22 +33,32 @@ public class BlackListController {
     @Autowired
     VerifyService service;
 
+    @Autowired
+    TenantService tenantService;
+
 
     @PostMapping(value="/check")
     public JSONObject check(HttpServletRequest request, BufferedReader reader){
         String inputLine;
         String str = "";
         String ip = getIpAddr(request);
+        JSONObject result = new JSONObject();
         try {
-        while ((inputLine = reader.readLine()) != null) {
-            str += inputLine;
-        }
-            reader.close();
+           boolean valid =  tenantService.allowVerify(ip,"1001");
+           if(valid) {
+               while ((inputLine = reader.readLine()) != null) {
+                   str += inputLine;
+               }
+               reader.close();
+           }else{
+                result.put("forbid",1);
+                result.put("message","No Permission");
+           }
         } catch (IOException e) {
             logger.error("IOException",e);
         }
 
-        JSONObject result = new JSONObject();
+
         if(StringUtil.isPresent(str)){
             String today = DateUtil.getToday();
             service.count(ip,today);
@@ -52,19 +66,29 @@ public class BlackListController {
             JSONObject json = JSON.parseObject(str);
             String callId = json.getString("callId");
             String callee = json.getString("callee");
+            boolean isBlack = false;
 
             if(StringUtil.isPresent(callee)) {
                 callee = StringUtil.trim(callee);
                 if(callee.length()>11){
                     callee = callee.substring(callee.length()-11);
                 }
-                boolean isBlack = service.verify(StringUtil.trim(callee));
+                isBlack = service.verify(StringUtil.trim(callee));
                 if(isBlack) {
                     result.put("forbid", 1);
                    service.countBlack(ip,today);
                 }
             }
             result.put("callId",callId);
+
+
+//            BlackRecordVo vo = new BlackRecordVo();
+//            vo.setCallId(callId);
+//            vo.setIp(ip);
+//            vo.setCreateTime(System.currentTimeMillis());
+//            vo.setPhone(callee);
+//            vo.setResult(isBlack?1:0);
+//            service.saveBlackRecord(vo);
 
         }
 

@@ -2,8 +2,11 @@ package com.renhe.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.renhe.cdr.vo.BlackRecordVo;
+import com.renhe.tenant.service.TenantSettingService;
 import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,11 @@ public class VerifyService {
 
     @Autowired
     StringRedisTemplate redisTemplate;
+
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+
 
     private static final String BLACK_RECORD =  "BLACK_PHONE_LIST";
 
@@ -96,5 +104,13 @@ public class VerifyService {
         return result;
 
     }
+
+
+    public void saveBlackRecord(BlackRecordVo vo){
+        mongoTemplate.save(vo);
+    }
+
+
+
 
 }

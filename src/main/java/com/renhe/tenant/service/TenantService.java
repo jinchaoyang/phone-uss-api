@@ -3,9 +3,12 @@ package com.renhe.tenant.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.renhe.tenant.entity.Tenant;
+import com.renhe.tenant.entity.TenantProduct;
 import com.renhe.tenant.mapper.TenantMapper;
 import com.renhe.tenant.vo.TenantVo;
+import com.renhe.utils.DateUtil;
 import com.renhe.utils.IDUtil;
+import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,12 @@ public class TenantService {
 
     @Autowired
     TenantMapper tenantMapper;
+
+    @Autowired
+    TenantSettingService tenantSettingService;
+
+    @Autowired
+    TenantProductService tenantProductService;
 
     public PageInfo<Tenant> queryPager(TenantVo tenantVo, int pageNo, int pageSize){
         PageHelper.startPage(pageNo,pageSize);
@@ -47,6 +56,20 @@ public class TenantService {
     public int destroy(String id){
         return tenantMapper.destroy(id);
     }
+
+
+    public boolean allowVerify(String ip,String productType){
+        String tenantId = tenantSettingService.getTenantByIp(ip);
+        if(StringUtil.isPresent(tenantId)){
+            TenantProduct product = tenantProductService.findByTenantIdAndType(tenantId,productType);
+            if(null!=product && product.getExpireAt().compareTo(DateUtil.getNow())>-1){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 
 }
