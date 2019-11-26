@@ -82,15 +82,6 @@ public class BlackListController {
             }
             result.put("callId",callId);
 
-
-//            BlackRecordVo vo = new BlackRecordVo();
-//            vo.setCallId(callId);
-//            vo.setIp(ip);
-//            vo.setCreateTime(System.currentTimeMillis());
-//            vo.setPhone(callee);
-//            vo.setResult(isBlack?1:0);
-//            service.saveBlackRecord(vo);
-
         }
 
         logger.info("ip -> {}, params -> {} ,result -> {}",ip,str,result);

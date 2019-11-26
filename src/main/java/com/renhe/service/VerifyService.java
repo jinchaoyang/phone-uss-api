@@ -2,11 +2,15 @@ package com.renhe.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.renhe.cdr.vo.BlackPhone;
 import com.renhe.cdr.vo.BlackRecordVo;
+import com.renhe.cdr.vo.VipPhone;
 import com.renhe.tenant.service.TenantSettingService;
 import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +41,12 @@ public class VerifyService {
     private static final String STAT_VIP_PREFIX="M_STAT_VIP_";
 
     public boolean verify(String phone){
-        return redisTemplate.opsForSet().isMember(BLACK_RECORD,phone).booleanValue();
+        Criteria criteria = Criteria.where("_id").is(phone);
+        Query query = Query.query(criteria);
+        long count = mongoTemplate.count(query,BlackPhone.class);
+        return count>0;
+
+       // return redisTemplate.opsForSet().isMember(BLACK_RECORD,phone).booleanValue();
     }
 
     public void count(String ip,String key){
@@ -73,7 +82,13 @@ public class VerifyService {
         while((line = in.readLine())!=null){
             if(StringUtil.isPresent(line)){
                 line = StringUtil.trim(line);
-                result = redisTemplate.opsForSet().add(BLACK_RECORD,line);
+                //result = redisTemplate.opsForSet().add(BLACK_RECORD,line);
+               boolean exists =  this.verify(line);
+               if(!exists){
+                   BlackPhone _phone = new BlackPhone();
+                   _phone.setPhoneNo(line);
+                   mongoTemplate.save(_phone);
+               }
             }
         }
         return result;
@@ -82,7 +97,10 @@ public class VerifyService {
 
 
     public boolean verifyVip(String phone){
-        return redisTemplate.opsForSet().isMember(VIP_RECORD,phone).booleanValue();
+        Criteria criteria = Criteria.where("_id").is(phone);
+        Query query = Query.query(criteria);
+        long count = mongoTemplate.count(query, VipPhone.class);
+        return count>0;
     }
 
 
@@ -98,7 +116,12 @@ public class VerifyService {
         while((line = in.readLine())!=null){
             if(StringUtil.isPresent(line)){
                 line = StringUtil.trim(line);
-                result = redisTemplate.opsForSet().add(VIP_RECORD,line);
+                boolean exists =  this.verify(line);
+                if(!exists){
+                    VipPhone _phone = new VipPhone();
+                    _phone.setPhoneNo(line);
+                    mongoTemplate.save(_phone);
+                }
             }
         }
         return result;
