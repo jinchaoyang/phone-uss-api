@@ -116,7 +116,10 @@ public class VerifyService {
         while((line = in.readLine())!=null){
             if(StringUtil.isPresent(line)){
                 line = StringUtil.trim(line);
-                boolean exists =  this.verify(line);
+                if(line.length()>11){
+                    line = line.substring(line.length()-11);
+                }
+                boolean exists =  this.verifyVip(line);
                 if(!exists){
                     VipPhone _phone = new VipPhone();
                     _phone.setPhoneNo(line);

@@ -3,6 +3,7 @@ package com.renhe.tenant.service;
 import com.renhe.tenant.entity.TenantSetting;
 import com.renhe.tenant.mapper.TenantSettingMapper;
 import com.renhe.tenant.vo.TenantSettingVo;
+import com.renhe.utils.Constant;
 import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -21,15 +22,35 @@ public class TenantSettingService {
     @Autowired
     StringRedisTemplate redisTemplate;
 
+    @Autowired
+    TenantProductService tenantProductService;
+
     public int save(TenantSetting setting){
         int result = mapper.save(setting);
-        this.clearCache();
+        if(result>0){
+            boolean valid = tenantProductService.blackValid(setting.getId());
+            if(valid && StringUtil.isPresent(setting.getIp())){
+                redisTemplate.opsForSet().add(Constant.CHECKER.IP_LIST_NAME,setting.getIp());
+            }
+        }
         return result;
     }
 
     public int update(TenantSetting setting){
+        TenantSetting _tmp = this.findById(setting.getId());
         int result = mapper.update(setting);
-        this.clearCache();
+        if(result>0){
+            if(!StringUtil.trim(_tmp.getIp()).equals(StringUtil.trim(setting.getIp()))){
+                redisTemplate.opsForSet().remove(Constant.CHECKER.IP_LIST_NAME,_tmp.getIp());
+            }
+            boolean valid = tenantProductService.blackValid(setting.getId());
+            if(valid){
+                redisTemplate.opsForSet().add(Constant.CHECKER.IP_LIST_NAME,StringUtil.trim(setting.getIp()));
+            }else{
+                redisTemplate.opsForSet().remove(Constant.CHECKER.IP_LIST_NAME,StringUtil.trim(setting.getIp()));
+            }
+
+        }
         return result;
     }
 
@@ -54,7 +75,7 @@ public class TenantSettingService {
 
 
     /**
-     * 从数据库中获取数据
+     * 从数据库中获取数据fi
      */
     public Map<String,String> getDataFromDB(){
         List<TenantSetting> settings = this.querByParams(new TenantSettingVo());

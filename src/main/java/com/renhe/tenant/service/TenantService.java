@@ -6,10 +6,12 @@ import com.renhe.tenant.entity.Tenant;
 import com.renhe.tenant.entity.TenantProduct;
 import com.renhe.tenant.mapper.TenantMapper;
 import com.renhe.tenant.vo.TenantVo;
+import com.renhe.utils.Constant;
 import com.renhe.utils.DateUtil;
 import com.renhe.utils.IDUtil;
 import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,9 @@ public class TenantService {
 
     @Autowired
     TenantProductService tenantProductService;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     public PageInfo<Tenant> queryPager(TenantVo tenantVo, int pageNo, int pageSize){
         PageHelper.startPage(pageNo,pageSize);
@@ -60,14 +65,15 @@ public class TenantService {
 
     public boolean allowVerify(String ip,String productType){
         String tenantId = tenantSettingService.getTenantByIp(ip);
+        boolean result  = false;
         if(StringUtil.isPresent(tenantId)){
-            TenantProduct product = tenantProductService.findByTenantIdAndType(tenantId,productType);
-            if(null!=product && product.getExpireAt().compareTo(DateUtil.getNow())>-1){
-                return true;
+            if(productType.equals("1001")) {
+                result = redisTemplate.opsForSet().isMember(Constant.CHECKER.IP_LIST_NAME, ip);
             }
+
         }
 
-        return false;
+        return result;
     }
 
 

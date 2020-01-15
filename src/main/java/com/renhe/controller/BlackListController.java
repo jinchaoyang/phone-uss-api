@@ -44,7 +44,7 @@ public class BlackListController {
         String ip = getIpAddr(request);
         JSONObject result = new JSONObject();
         try {
-           boolean valid = true;
+           boolean valid = true;//tenantService.allowVerify(ip,"1001");
            if(valid) {
                while ((inputLine = reader.readLine()) != null) {
                    str += inputLine;
