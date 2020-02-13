@@ -13,7 +13,7 @@ create table usr_user(
  )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 
- insert into usr_user (id,name,user_name,password,mobile,status)values('1','系统管理员','admin','admin','18600544643','USE');
+ insert into usr_user (id,name,user_name,password,mobile,status,role)values('1','系统管理员','admin','admin','18600544643','USE',1);
 
 
 drop table acc_tenant;

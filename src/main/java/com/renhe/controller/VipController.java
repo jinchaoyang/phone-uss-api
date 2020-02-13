@@ -3,6 +3,7 @@ package com.renhe.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.renhe.service.VerifyService;
+import com.renhe.utils.DateUtil;
 import com.renhe.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,8 @@ public class VipController {
 
 
         if(StringUtil.isPresent(str)){
-           // String today = DateUtil.getToday();
-            //service.count(ip,today);
+            String today = DateUtil.getToday();
+            service.statVip(ip,today);
 
             JSONObject json = JSON.parseObject(str);
             String callId = json.getString("callId");
@@ -67,6 +68,8 @@ public class VipController {
                 isVip = service.verifyVip(StringUtil.trim(callee));
                 if(!isVip) {
                     result.put("forbid",1);
+                }else{
+                    service.countVip(ip,today);
                 }
             }
             result.put("callId",callId);

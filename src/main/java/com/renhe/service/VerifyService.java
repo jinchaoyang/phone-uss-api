@@ -15,8 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class VerifyService {
@@ -39,6 +38,8 @@ public class VerifyService {
     private static final String VIP_RECORD =  "VIP_PHONE_LIST";
 
     private static final String STAT_VIP_PREFIX="M_STAT_VIP_";
+
+    private static final String STAT_ALL_VIP_PREFIX="M_VIP_";
 
     public boolean verify(String phone){
         Criteria criteria = Criteria.where("_id").is(phone);
@@ -104,6 +105,10 @@ public class VerifyService {
     }
 
 
+    public void statVip(String ip,String key){
+        redisTemplate.opsForHash().increment(STAT_ALL_VIP_PREFIX+ip,key,1l);
+    }
+
     public void countVip(String ip,String key){
         redisTemplate.opsForHash().increment(STAT_VIP_PREFIX+ip,key,1l);
     }
@@ -134,6 +139,33 @@ public class VerifyService {
 
     public void saveBlackRecord(BlackRecordVo vo){
         mongoTemplate.save(vo);
+    }
+
+
+    public JSONArray statAllByDicName(String ip){
+        JSONArray array = new JSONArray();
+        Map<Object,Object> counter =  redisTemplate.opsForHash().entries(STAT_PREFIX+ip);
+        Map<Object,Object> blackCounter =  redisTemplate.opsForHash().entries(STAT_BLACK_PREFIX+ip);
+
+        Map<Object,Object> vipAll =  redisTemplate.opsForHash().entries(STAT_ALL_VIP_PREFIX+ip);
+        Map<Object,Object> vipCounter =  redisTemplate.opsForHash().entries(STAT_VIP_PREFIX+ip);
+
+
+        Set<String> keys = new TreeSet<>((o2,o1)->o2.compareTo(o1));
+        counter.keySet().forEach(e -> keys.add(e.toString()));
+        vipCounter.keySet().forEach(e -> keys.add(e.toString()));
+
+
+        for(String key : keys){
+            JSONObject obj = new JSONObject();
+            obj.put("date",key);
+            obj.put("total",counter.getOrDefault(key,"0"));
+            obj.put("forbid",blackCounter.getOrDefault(key,"0"));
+            obj.put("vipTotal",vipAll.getOrDefault(key,"0"));
+            obj.put("vip",vipCounter.getOrDefault(key,"0"));
+            array.add(obj);
+        }
+        return array;
     }
 
 
