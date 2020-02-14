@@ -12,15 +12,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.util.Arrays;
+
 
 /**
  * 系统拦截器
  */
-//@WebFilter
+@WebFilter
 public class AuthFilter implements Filter {
 
     private final static Logger logger = LoggerFactory.getLogger(AuthFilter.class);
+
+    private final static String[] WHITE_URLS= new String[]{"/auth/login","/auth/logout"};
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -31,19 +34,20 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        String referer = StringUtil.trim(req.getHeader("Referer"));
-        if(StringUtil.isPresent(referer)){
-            //if(StringUtil.isPresent(referer) && referer.equals(".unicss.com")){
+        String url = req.getRequestURI();
+        String authorization = req.getHeader("Authorization");
+
+        if(StringUtil.isPresent(authorization) || Arrays.asList(WHITE_URLS).contains(url)  ){
             chain.doFilter(request,response);
         }else{
             chain.doFilter(request,response);
-//            Result<String> result = new Result<>();
-//            result.setCode(-1);
-//            result.setMessage("非法访问");
-//            resp.setCharacterEncoding("UTF-8");
-//            PrintWriter writer = resp.getWriter();
-//            writer.write(JSON.toJSONString(result));
-//            writer.flush();
+            Result<String> result = new Result<>();
+            result.setCode(-1);
+            result.setMessage("非法访问");
+            resp.setCharacterEncoding("UTF-8");
+            PrintWriter writer = resp.getWriter();
+            writer.write(JSON.toJSONString(result));
+            writer.flush();
 
         }
     }

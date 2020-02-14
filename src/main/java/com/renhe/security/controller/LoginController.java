@@ -85,4 +85,36 @@ public class LoginController {
         return result;
     }
 
+
+    @GetMapping(value="/info")
+    public Result<User> getUserInfo(HttpServletRequest request){
+        Result<User> result = new Result<>();
+        int rcode = -1;
+        String token = null;
+        try{
+            token = request.getHeader("Authorization");
+            if(StringUtil.isPresent(token)){
+                String userId = TokenUtil.getUserId(token);
+                if(StringUtil.isPresent(userId)) {
+                    User user = userServcie.findById(userId);
+                    result.setData(user);
+                    rcode = 0;
+                }else{
+                    result.setMessage("token is invalid");
+                }
+            }else{
+                result.setMessage("token parameter can't be null");
+            }
+
+        }catch(Exception e){
+            logger.error("[getUserInfo]: token -> {}",token,e);
+            result.setMessage(e.getMessage());
+        }
+        result.setCode(rcode);
+        logger.info("[getUserIno]: token -> {}, result -> {}", token,JSON.toJSONString(result));
+        return result;
+    }
+
+
+
 }
