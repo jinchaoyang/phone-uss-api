@@ -3,13 +3,18 @@ package com.renhe.tenant.controller;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.renhe.base.Result;
+import com.renhe.security.entity.User;
+import com.renhe.security.vo.UserVo;
 import com.renhe.tenant.entity.Tenant;
 import com.renhe.tenant.service.TenantService;
 import com.renhe.tenant.vo.TenantVo;
+import com.renhe.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -145,6 +150,40 @@ public class TenantController {
         return result;
 
     }
+
+    /**
+     * 验证用户名信息是否已经存在
+     *
+     * @return
+     */
+    @GetMapping(value="/tenantCodeCheck")
+    public Result<Boolean> tenantCodeCheck(TenantVo vo){
+        Result<Boolean> result = new Result<>();
+        int rcode = -1;
+        try{
+            List<Tenant> tenants = tenantService.queryByParams(vo);
+            boolean state = false;
+            if(null==tenants || tenants.isEmpty()){
+                state = true;
+            }else{
+                if(StringUtil.isPresent(vo.getId())){
+                    Tenant tenant = tenants.get(0);
+                    if(vo.getId().equals(tenant.getId())){
+                        state = true;
+                    }
+                }
+            }
+            result.setData(state);
+            rcode = 0;
+
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            logger.error("[tenantCodeCheckException]: vo -> {}",JSON.toJSONString(vo));
+        }
+        result.setCode(rcode);
+        return result;
+    }
+
 
 
 

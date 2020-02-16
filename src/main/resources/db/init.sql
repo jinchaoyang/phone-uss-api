@@ -29,6 +29,7 @@ create table acc_tenant(
   status varchar(8) not null comment '状态, 0: 已删除 1：可用 2：禁用 3：欠费 ',
   creator_id varchar(32) default null comment '创建人',
   operator_id varchar(32) default null comment '最近操作人',
+  ip varchar(16) default null comment '服务IP',
   created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
   updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
   primary key(id)

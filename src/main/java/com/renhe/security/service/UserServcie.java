@@ -48,6 +48,12 @@ public class UserServcie  {
         return pageInfo;
     }
 
+
+
+    public List<User> queryByParams(UserVo vo){
+        return userMapper.queryByParams(vo);
+    }
+
     /**
      * 保存用户信息
      * @param user

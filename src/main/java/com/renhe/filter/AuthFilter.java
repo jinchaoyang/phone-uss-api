@@ -23,7 +23,7 @@ public class AuthFilter implements Filter {
 
     private final static Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
-    private final static String[] WHITE_URLS= new String[]{"/auth/login","/auth/logout"};
+    private final static String[] WHITE_URLS= new String[]{"/auth/login","/auth/logout","/phone/download"};
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

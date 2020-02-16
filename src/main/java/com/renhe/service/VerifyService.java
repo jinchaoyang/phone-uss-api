@@ -168,6 +168,20 @@ public class VerifyService {
         return array;
     }
 
+    /**
+     * 统计所有黒名单
+     */
+    public long countAllBlack(){
+        return mongoTemplate.count(new Query(),BlackPhone.class);
+    }
+
+    /**
+     * 统计所有白名单
+     */
+    public long countAllVip(){
+        return mongoTemplate.count(new Query(),VipPhone.class);
+    }
+
 
 
 

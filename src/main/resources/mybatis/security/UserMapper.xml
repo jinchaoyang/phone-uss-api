@@ -24,12 +24,13 @@
         select
         <include refid="baseColumnSql"/>
         from usr_user  where  status = 'USE'
-        <if test="userName!=''">
+        <if test="userName!='' and userName!=null">
             and user_name = #{userName}
         </if>
-        <if test="name!=''">
+        <if test="name!='' and name!=null">
             and name like concat('%',#{name},'%')
         </if>
+        order by  created_at desc
     </select>
 
     <insert id="save" parameterType="com.renhe.security.entity.User">

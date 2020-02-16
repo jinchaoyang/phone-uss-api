@@ -8,10 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -32,7 +29,7 @@ public class PhoneController {
 
 
 
-
+    @CrossOrigin
     @RequestMapping(value="/upload",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     public String upload(MultipartFile uploadFile, @RequestParam("areaCode") String areaCode){
         JSONObject obj = new JSONObject();

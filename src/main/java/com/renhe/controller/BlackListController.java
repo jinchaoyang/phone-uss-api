@@ -266,5 +266,35 @@ public class BlackListController {
 
     }
 
+    /**
+     * 统计名单总数
+     * @return
+     */
+    @CrossOrigin
+    @GetMapping(value = "/stat")
+    public Result<JSONObject> statAll(@RequestParam(required = false) String type){
+        Result<JSONObject> result = new Result<>();
+        try {
+            long blackTotal = 0l;
+            long vipTotal = 0l;
+
+            if("0".equals(type) || StringUtil.isBlank(type)) {
+               blackTotal = service.countAllBlack();
+            }
+            if("1".equals(type) || StringUtil.isBlank(type)) {
+               vipTotal = service.countAllVip();
+            }
+            JSONObject json = new JSONObject();
+            json.put("vip", vipTotal);
+            json.put("black", blackTotal);
+            result.setCode(0);
+            result.setData(json);
+        }catch(Exception e){
+            result.setMessage(e.getMessage());
+            result.setCode(-1);
+        }
+        return result;
+
+    }
 
 }

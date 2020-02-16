@@ -33,9 +33,9 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 cus:
-  phonePrefix: /apps/phone_cube/data/mobilearea-1152.txt
-  phonePath: /apps/phone_cube/data/area
-  destPath: /apps/phone_cube/data/dest
+  phonePrefix: /Users/jinchaoyang/Desktop/phone_cube/data/mobilearea-1152.txt
+  phonePath: /Users/jinchaoyang/Desktop/phone_cube/data/area
+  destPath: /Users/jinchaoyang/Desktop/phone_cube/data/dest
 logging:
   level:
     root: INFO

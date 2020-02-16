@@ -4,7 +4,7 @@
 
 
     <sql id="baseColumnSql">
-        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at
+        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.Tenant" >
@@ -19,11 +19,14 @@
         select
         <include refid="baseColumnSql"/>
         from acc_tenant  where  status !='0'
-        <if test="tenantCode!=''">
+        <if test="tenantCode!='' and tenantCode!=null">
             and tenant_code = #{tenantCode}
         </if>
-        <if test="name!=''">
+        <if test="name!='' and name !=null ">
             and name like concat('%',#{name},'%')
+        </if>
+        <if test="ip!='' and ip!=null">
+            and ip  = #{ip}
         </if>
         <if test="contactName!='' and contactName != null ">
             and contact_name like concat('%',#{contactName},'%')
@@ -35,12 +38,13 @@
         <if test="status!=null and status != null">
             and status = #{status}
         </if>
+        order by created_at desc
     </select>
 
     <insert id="save" parameterType="com.renhe.tenant.entity.Tenant">
          insert into acc_tenant
          (
-            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at
+            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip
          )values(
             #{id},
             #{tenantCode},
@@ -54,7 +58,8 @@
             #{creatorId},
             #{operatorId},
             #{createdAt},
-            #{updatedAt}
+            #{updatedAt},
+            #{ip}
          )
     </insert>
 
@@ -85,6 +90,9 @@
             </if>
             <if test="operatorId!=null">
                 operator_id = #{operatorId},
+            </if>
+            <if test="ip!=null">
+                ip = #{ip},
             </if>
         </set>
         where id = #{id}

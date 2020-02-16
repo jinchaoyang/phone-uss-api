@@ -74,6 +74,8 @@ public class Tenant implements Serializable {
      */
     private String status;
 
+    private String ip;
+
 
     public String getId() {
         return id;
@@ -177,5 +179,13 @@ public class Tenant implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }
