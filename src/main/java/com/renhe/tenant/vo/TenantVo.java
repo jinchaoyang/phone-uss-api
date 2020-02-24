@@ -22,6 +22,8 @@ public class TenantVo implements Serializable {
 
     private String ip;
 
+    private String tenantType;
+
     public String getName() {
         return name;
     }
@@ -92,5 +94,13 @@ public class TenantVo implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getTenantType() {
+        return tenantType;
+    }
+
+    public void setTenantType(String tenantType) {
+        this.tenantType = tenantType;
     }
 }

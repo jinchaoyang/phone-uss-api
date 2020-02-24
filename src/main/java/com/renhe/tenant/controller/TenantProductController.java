@@ -1,19 +1,22 @@
 package com.renhe.tenant.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
 import com.renhe.tenant.entity.TenantProduct;
 import com.renhe.tenant.service.TenantProductService;
+import com.renhe.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value ="/product")
+@RequestMapping(value ="/tenant/product")
 public class TenantProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(TenantProductController.class);
@@ -27,10 +30,14 @@ public class TenantProductController {
      * @return
      */
     @PostMapping(value="")
-    public Result<TenantProduct> save(@RequestBody TenantProduct tenantProduct){
+    public Result<TenantProduct> save(@RequestBody TenantProduct tenantProduct, HttpServletRequest request){
         Result<TenantProduct> result = new Result<>();
         int rcode = -1;
         try{
+            String token = request.getHeader("Authorization");
+            if(StringUtil.isPresent(token)) {
+                tenantProduct.setCreatorId(TokenUtil.getUserId(token));
+            }
             int count = tenantProductService.save(tenantProduct);
             if(count>0){
                 rcode = 0;

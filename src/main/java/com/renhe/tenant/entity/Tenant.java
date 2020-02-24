@@ -76,6 +76,11 @@ public class Tenant implements Serializable {
 
     private String ip;
 
+    /**
+     * 服务分组 1：内网 2：外网
+     */
+    private String tenantType;
+
 
     public String getId() {
         return id;
@@ -187,5 +192,13 @@ public class Tenant implements Serializable {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getTenantType() {
+        return tenantType;
+    }
+
+    public void setTenantType(String tenantType) {
+        this.tenantType = tenantType;
     }
 }

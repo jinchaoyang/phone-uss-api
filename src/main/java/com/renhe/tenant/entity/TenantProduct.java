@@ -21,7 +21,7 @@ public class TenantProduct implements Serializable {
     /**
      * 产品类型
      * 1001：黑名单
-     * 1002: 录音质检
+     * 1002: 白名单
      */
     private String productType;
 
@@ -36,6 +36,11 @@ public class TenantProduct implements Serializable {
      * 费率,单位分
      */
     private Integer fee;
+
+    /**
+     * 生效时间
+     */
+    private String effectAt;
 
     /**
      * 过期时间
@@ -198,5 +203,13 @@ public class TenantProduct implements Serializable {
 
     public void setAppKey(String appKey) {
         this.appKey = appKey;
+    }
+
+    public String getEffectAt() {
+        return effectAt;
+    }
+
+    public void setEffectAt(String effectAt) {
+        this.effectAt = effectAt;
     }
 }

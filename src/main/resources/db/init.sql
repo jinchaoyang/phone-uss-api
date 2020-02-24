@@ -30,10 +30,12 @@ create table acc_tenant(
   creator_id varchar(32) default null comment '创建人',
   operator_id varchar(32) default null comment '最近操作人',
   ip varchar(16) default null comment '服务IP',
+  tenant_type varchar(8) default null comment '服务分组',
   created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
   updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
   primary key(id)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
 
 
 drop table acc_tenant_product;
@@ -62,6 +64,21 @@ create table acc_tenant_setting(
   id varchar(32) not null comment '主键,同租户ID',
   ip varchar(64) not null comment 'IP地址',
   primary key(id)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+drop table acc_tenant_trade;
+create table acc_tenant_trade(
+  id varchar(32) not null comment '主键',
+  tenant_id varchar(32) not null comment '租户ID',
+  trade_type varchar(4) not null comment '交易类型：1：支付 2：消费 3：冲账',
+  amount int(10)  not null comment '交易金额',
+  pay_type varchar(8) default null comment '支付方式',
+  note varchar(255) default null comment '备注',
+  creator_id varchar(32) default null comment '创建人',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  primary key(id),
+  key idx_teant_id_tenant_trade (tenant_id)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 

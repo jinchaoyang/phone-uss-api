@@ -4,7 +4,7 @@
 
 
     <sql id="baseColumnSql">
-        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip
+        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip,tenant_type
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.Tenant" >
@@ -35,8 +35,11 @@
         <if test="email!='' and email != null">
             and email = #{email}
         </if>
-        <if test="status!=null and status != null">
+        <if test="status!='' and status != null">
             and status = #{status}
+        </if>
+        <if test="tenantType!='' and tenantType != null">
+            and tenant_type = #{tenantType}
         </if>
         order by created_at desc
     </select>
@@ -44,7 +47,7 @@
     <insert id="save" parameterType="com.renhe.tenant.entity.Tenant">
          insert into acc_tenant
          (
-            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip
+            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip,tenant_type
          )values(
             #{id},
             #{tenantCode},
@@ -59,7 +62,8 @@
             #{operatorId},
             #{createdAt},
             #{updatedAt},
-            #{ip}
+            #{ip},
+            #{tenantType}
          )
     </insert>
 
@@ -93,6 +97,9 @@
             </if>
             <if test="ip!=null">
                 ip = #{ip},
+            </if>
+            <if test="tenantType!=null">
+                tenant_type = #{tenantType},
             </if>
         </set>
         where id = #{id}
