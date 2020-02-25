@@ -83,22 +83,22 @@ public class TenantProductController {
      * @param id
      * @return
      */
-    @GetMapping(value="/{id}")
-    public Result<TenantProduct> show(@PathVariable String id){
-        Result<TenantProduct> result = new Result<>();
-        int rcode = -1;
-        try{
-            TenantProduct tenantProduct = tenantProductService.findById(id);
-            rcode = 0;
-            result.setData(tenantProduct);
-        }catch(Exception e){
-            logger.error("[showException]: id -> {}", id,e);
-            result.setMessage(e.getMessage());
-        }
-        result.setCode(rcode);
-        logger.info("[show]: id -> {}, result -> {}",id,JSON.toJSONString(result));
-        return result;
-    }
+//    @GetMapping(value="/{id}")
+//    public Result<TenantProduct> show(@PathVariable String id){
+//        Result<TenantProduct> result = new Result<>();
+//        int rcode = -1;
+//        try{
+//            TenantProduct tenantProduct = tenantProductService.findById(id);
+//            rcode = 0;
+//            result.setData(tenantProduct);
+//        }catch(Exception e){
+//            logger.error("[showException]: id -> {}", id,e);
+//            result.setMessage(e.getMessage());
+//        }
+//        result.setCode(rcode);
+//        logger.info("[show]: id -> {}, result -> {}",id,JSON.toJSONString(result));
+//        return result;
+//    }
 
 
     /**
@@ -125,6 +125,46 @@ public class TenantProductController {
         }
         result.setCode(rcode);
         logger.info("[update]: tenantProduct -> {}, result -> {}",JSON.toJSONString(tenantProduct),JSON.toJSONString(result));
+        return result;
+    }
+
+
+    @GetMapping(value="/{tenantId}")
+    public Result<TenantProduct> findByProductCode(@PathVariable String tenantId,@RequestParam String productCode){
+        Result<TenantProduct> result = new Result<>();
+        int rcode = -1;
+        try{
+            TenantProduct tenantProduct = tenantProductService.findByTenantIdAndType(tenantId,productCode);
+            rcode = 0;
+            result.setData(tenantProduct);
+        }catch(Exception e){
+            logger.error("[findByProductCodeException]: tenantId -> {}, productCode -> {}", tenantId,productCode,e);
+            result.setMessage(e.getMessage());
+        }
+        result.setCode(rcode);
+        logger.info("[findByProductCode]: tenantId -> {} , productCode -> {}, result -> {}",tenantId,productCode,JSON.toJSONString(result));
+        return result;
+
+    }
+
+    @PostMapping(value= "/renew")
+    public Result<Integer> renew(@RequestBody TenantProduct product){
+        Result<Integer> result = new Result<>();
+        int rcode = -1;
+        try{
+            int count = tenantProductService.renew(product);
+            if(count>0){
+                rcode = 0;
+            }else{
+                result.setMessage("续费失败，未找到订购记录");
+            }
+
+        }catch(Exception e){
+            logger.error("[renewException]: product -> {} ", JSON.toJSONString(product),e);
+            result.setMessage(e.getMessage());
+        }
+        result.setCode(rcode);
+        logger.info("[renew]: product -> {}, result -> {}",JSON.toJSONString(product),JSON.toJSONString(result));
         return result;
     }
 

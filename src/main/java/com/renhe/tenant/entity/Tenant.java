@@ -81,6 +81,16 @@ public class Tenant implements Serializable {
      */
     private String tenantType;
 
+    /**
+     * 账户余额
+     */
+    private Long balance;
+
+    /**
+     * 透支金额
+     */
+    private Long overdraft;
+
 
     public String getId() {
         return id;
@@ -200,5 +210,21 @@ public class Tenant implements Serializable {
 
     public void setTenantType(String tenantType) {
         this.tenantType = tenantType;
+    }
+
+    public Long getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Long balance) {
+        this.balance = balance;
+    }
+
+    public Long getOverdraft() {
+        return overdraft;
+    }
+
+    public void setOverdraft(Long overdraft) {
+        this.overdraft = overdraft;
     }
 }

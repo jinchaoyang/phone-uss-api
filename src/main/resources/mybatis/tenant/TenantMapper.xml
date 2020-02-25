@@ -4,7 +4,7 @@
 
 
     <sql id="baseColumnSql">
-        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip,tenant_type
+        id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip,tenant_type,balance,overdraft
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.Tenant" >
@@ -47,7 +47,7 @@
     <insert id="save" parameterType="com.renhe.tenant.entity.Tenant">
          insert into acc_tenant
          (
-            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip,tenant_type
+            id,tenant_code,name,contact_name,contact_phone,email,address,remark,status,creator_id,operator_id,created_at,updated_at,ip,tenant_type,balance,overdraft
          )values(
             #{id},
             #{tenantCode},
@@ -63,7 +63,9 @@
             #{createdAt},
             #{updatedAt},
             #{ip},
-            #{tenantType}
+            #{tenantType},
+            #{balance},
+            #{overdraft}
          )
     </insert>
 
@@ -100,6 +102,12 @@
             </if>
             <if test="tenantType!=null">
                 tenant_type = #{tenantType},
+            </if>
+            <if test="balance!=null">
+                balance = #{balance},
+            </if>
+            <if test="overdraft!=null">
+                overdraft = #{overdraft},
             </if>
         </set>
         where id = #{id}

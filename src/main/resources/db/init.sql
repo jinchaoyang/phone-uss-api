@@ -31,6 +31,8 @@ create table acc_tenant(
   operator_id varchar(32) default null comment '最近操作人',
   ip varchar(16) default null comment '服务IP',
   tenant_type varchar(8) default null comment '服务分组',
+  balance int(8) default 0 comment '账户余额',
+  overdraft int(8) default 0 comment '透支金额',
   created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
   updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
   primary key(id)
@@ -45,6 +47,7 @@ create table acc_tenant_product(
   product_type varchar(16) not null comment '产品类型',
   fee_type varchar(16) not null comment '计费类型',
   fee int(8) not null comment '费率，单位分',
+  effect_at varchar(18) default null comment '生效日期',
   expire_at varchar(18) default null comment '过期时间',
   vendor varchar(2) default null comment '接口厂商，1：百度 2：科大讯飞 3：阿里云',
   status varchar(8) not null comment '状态，1：可用 0：不可用',
@@ -80,6 +83,26 @@ create table acc_tenant_trade(
   primary key(id),
   key idx_teant_id_tenant_trade (tenant_id)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+drop table acc_tenant_bill;
+create table acc_tenant_bill(
+  id varchar(32) not null comment '主键',
+  tenant_id varchar(32) not null comment '租户ID',
+  product_code varchar(8) not null comment '产品编号',
+  bill_type varchar(4) not null comment '账单类型,1: 包月费用 2:调用次数' ,
+  fee int(8) default 0 comment '单价',
+  duration int(8) default 0 comment '订购时长',
+  amount int(8) default 0 comment '总金额',
+  trade_id varchar(32) default null comment '交易ID',
+  note varchar(128) default null comment '交易备注',
+  creator_id varchar(32) default null comment '创建人',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  primary key(id),
+  key idx_teant_id_tenant_bill (tenant_id)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
 
 
 

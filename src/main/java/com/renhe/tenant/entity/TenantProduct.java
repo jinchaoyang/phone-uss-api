@@ -1,5 +1,7 @@
 package com.renhe.tenant.entity;
 
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -91,6 +93,10 @@ public class TenantProduct implements Serializable {
      * 密钥
      */
     private String appKey;
+
+
+    @Transient
+    private int duration;
 
 
     public String getId() {
@@ -212,4 +218,13 @@ public class TenantProduct implements Serializable {
     public void setEffectAt(String effectAt) {
         this.effectAt = effectAt;
     }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }
+

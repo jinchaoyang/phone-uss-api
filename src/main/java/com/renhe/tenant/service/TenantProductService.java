@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,12 +30,24 @@ public class TenantProductService {
         return this.queryByParams(vo);
     }
 
-    TenantProduct findByTenantIdAndType(String tenantId,String type){
-        return tenantProductMapper.findByTenantIdAndType(tenantId,type);
+    public TenantProduct findByTenantIdAndType(String tenantId,String type){
+        TenantProductVo vo = new TenantProductVo();
+        vo.setTenantId(tenantId);
+        vo.setProductType(type);
+        List<TenantProduct> products = this.queryByParams(vo);
+        if(null!=products && !products.isEmpty()){
+            return products.get(0);
+        }
+        return null;
     }
 
     public  int save(TenantProduct tenantProduct){
+        String pattern = "yyyy-MM-dd HH:mm";
         tenantProduct.setId(IDUtil.generate());
+        tenantProduct.setFee(tenantProduct.getFee()*100);
+        LocalDateTime begin = DateUtil.getDateTime(tenantProduct.getEffectAt(),pattern);
+        LocalDateTime end = DateUtil.plusMonths(begin,tenantProduct.getDuration());
+        tenantProduct.setExpireAt(DateUtil.localDateTimeFormat(end,pattern));
         return  tenantProductMapper.save(tenantProduct);
     }
 
@@ -80,6 +93,25 @@ public class TenantProductService {
         vo.setProductType("1001");
         vo.setStatus("1");
         return this.queryByParams(vo);
+    }
+
+    public int renew(TenantProduct tenantProduct){
+        int result = 0;
+        String pattern = "yyyy-MM-dd HH:mm";
+        TenantProduct _product = this.findByTenantIdAndType(tenantProduct.getTenantId(),tenantProduct.getProductType());
+        if(null!=_product){
+           String now =  DateUtil.getNow(pattern);
+           String beginAt = now;
+           if(now.compareTo(_product.getExpireAt())<=0){ //未过期
+                beginAt = _product.getExpireAt();
+           }
+            LocalDateTime begin = DateUtil.getDateTime(beginAt,pattern);
+            LocalDateTime end = DateUtil.plusMonths(begin,tenantProduct.getDuration());
+            _product.setExpireAt(DateUtil.localDateTimeFormat(end,pattern));
+            result = this.update(_product);
+
+        }
+        return result;
     }
 
 
