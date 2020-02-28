@@ -34,5 +34,13 @@
          )
     </insert>
 
+    <update id="charge" parameterType="java.util.Map">
+        update acc_tenant set balance = balance + #{amount} where id = #{tenantId}
+    </update>
+
+    <update id="consume" parameterType="java.util.Map">
+        update acc_tenant set balance = balance - #{amount} where id = #{tenantId}
+    </update>
+
 
 </mapper>

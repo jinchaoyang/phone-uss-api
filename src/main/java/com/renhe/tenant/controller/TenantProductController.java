@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -38,12 +39,13 @@ public class TenantProductController {
             if(StringUtil.isPresent(token)) {
                 tenantProduct.setCreatorId(TokenUtil.getUserId(token));
             }
-            int count = tenantProductService.save(tenantProduct);
-            if(count>0){
+            Map<String,String> rs = tenantProductService.buyProduct(tenantProduct,1);
+
+            if(rs.get("code").equals("0")){
                 rcode = 0;
                 result.setData(tenantProduct);
             }else{
-                result.setMessage("tenantProduct save failed!");
+                result.setMessage(rs.get("message"));
             }
         }catch(Exception e){
             logger.error("[saveException]: tenantProduct -> {}", JSON.toJSONString(tenantProduct),e);
@@ -152,11 +154,11 @@ public class TenantProductController {
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            int count = tenantProductService.renew(product);
-            if(count>0){
+            Map<String,String> rs = tenantProductService.buyProduct(product,2);
+            if(rs.get("code").equals("0")){
                 rcode = 0;
             }else{
-                result.setMessage("续费失败，未找到订购记录");
+                result.setMessage(rs.get("message"));
             }
 
         }catch(Exception e){

@@ -17,7 +17,7 @@ public class TenantBill implements Serializable {
     private String productCode;
 
     /**
-     * 计费类型
+     * 计费类型 1:包月计费 2：按月
      */
     private String billType;
 

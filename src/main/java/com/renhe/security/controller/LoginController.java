@@ -42,7 +42,7 @@ public class LoginController {
                 obj.put("name", user.getName());
                 JSONObject json = new JSONObject();
                 json.put("id", user.getId());
-                obj.put("token", TokenUtil.createToken(json.toString(), 3600 * 2 * 1000));
+                obj.put("token", TokenUtil.createToken(json.toString(), 3600 * 24 * 1000));
                 rcode = 0;
                 result.setData(obj);
             } else {
