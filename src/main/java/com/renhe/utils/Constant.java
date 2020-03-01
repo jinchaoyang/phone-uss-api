@@ -10,4 +10,11 @@ public interface Constant {
         String IP_LIST_NAME="blacak:vip:ip";
 
     }
+
+    interface  ACC {
+        String ACC_PREFIX= "ACC:";
+
+        String ACC_IPS_DICNAME="ACC:IPS";
+
+    }
 }

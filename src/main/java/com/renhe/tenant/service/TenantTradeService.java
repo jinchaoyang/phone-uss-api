@@ -5,8 +5,11 @@ import com.github.pagehelper.PageInfo;
 import com.renhe.tenant.entity.TenantTrade;
 import com.renhe.tenant.mapper.TenantTradeMapper;
 import com.renhe.tenant.vo.TenantTradeVo;
+import com.renhe.utils.Constant;
 import com.renhe.utils.IDUtil;
+import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,8 @@ public class TenantTradeService {
     @Autowired
     TenantTradeMapper mapper;
 
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
 
 
@@ -35,12 +40,11 @@ public class TenantTradeService {
         return mapper.queryByParams(vo);
     }
 
-    @Transactional
     public String  save(TenantTrade tenantTrade){
         String tradeId = null;
         int result = 0;
         tenantTrade.setId(IDUtil.generate());
-        tenantTrade.setAmount(tenantTrade.getAmount()*100);
+        tenantTrade.setAmount(tenantTrade.getAmount()*1000);
         result = mapper.save(tenantTrade);
         if(result>0){
             Map<String,Object> params = new HashMap<>();
@@ -57,12 +61,27 @@ public class TenantTradeService {
     }
 
     public int charge(Map<String,Object> params){
-        return mapper.charge(params);
+        int result =  mapper.charge(params);
+        this.updateCache(params,1);
+        return result;
     }
 
     public int consume(Map<String,Object> params){
-        return mapper.consume(params);
+        int result =  mapper.consume(params);
+        this.updateCache(params,2);
+        return result;
 
+    }
+
+    public void updateCache(Map<String,Object> params,int type){
+        String tenantId = StringUtil.trim(params.get("tenantId"));
+        long amount = Long.parseLong(StringUtil.trim(params.getOrDefault("amount","0")));
+        String key = Constant.ACC.ACC_PREFIX+tenantId;
+        if(type==1) {
+            redisTemplate.opsForHash().increment(key, "balance", amount);
+        }else{
+            redisTemplate.opsForHash().increment(key, "balance", -amount);
+        }
     }
 
 

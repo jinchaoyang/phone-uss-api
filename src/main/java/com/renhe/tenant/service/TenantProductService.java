@@ -122,6 +122,7 @@ public class TenantProductService {
             LocalDateTime begin = DateUtil.getDateTime(beginAt,pattern);
             LocalDateTime end = DateUtil.plusMonths(begin,tenantProduct.getDuration());
             _product.setExpireAt(DateUtil.localDateTimeFormat(end,pattern));
+            _product.setFee(tenantProduct.getFee()*1000);
             result = this.update(_product);
 
         }
@@ -135,8 +136,8 @@ public class TenantProductService {
         int code = 0;
         Tenant tenant = tenantService.findById(tenantProduct.getTenantId());
         long total = tenant.getBalance()+tenant.getOverdraft();
-        tenantProduct.setFee(tenantProduct.getFee()*100);
-        if(tenantProduct.getFeeType().equals("2") && total < 10*100){ //按量计费,小于10元不能开通
+        tenantProduct.setFee(tenantProduct.getFee()*1000);
+        if(tenantProduct.getFeeType().equals("2") && total < 10*1000){ //按量计费,小于10元不能开通
             message = "账户可用余额必需大于10元";
             code = 1001;
         }else{
@@ -156,7 +157,7 @@ public class TenantProductService {
              long amount = tenantProduct.getFee()*tenantProduct.getDuration();
             TenantTrade tradeLog = new TenantTrade();
             tradeLog.setCreatorId(tenantProduct.getCreatorId());
-            tradeLog.setAmount(amount/100);
+            tradeLog.setAmount(amount/1000);
             tradeLog.setTenantId(tenantProduct.getTenantId());
             tradeLog.setTradeType("2");
             String tradeId = tradeService.save(tradeLog);
@@ -173,13 +174,38 @@ public class TenantProductService {
             bill.setTradeId(tradeId);
             billService.save(bill);
 
+            this.updateCache(tenantProduct,tenant,0);
 
+        }else{
+            this.updateCache(tenantProduct,tenant,-1);
         }
         result.put("code",code+"");
         result.put("message",message);
         return result;
 
 
+    }
+
+    /**
+     * 0: 续费成功
+     * -1: 续费失败
+     * @param tenantProduct
+     * @param tenant
+     * @param type
+     */
+    public void updateCache(TenantProduct tenantProduct,Tenant tenant,int type){
+        String key = Constant.ACC.ACC_PREFIX+tenantProduct.getProductType();
+        if(type==0){
+            redisTemplate.opsForSet().add(key,tenant.getIp());
+        }else{
+            redisTemplate.opsForSet().remove(key,tenant.getIp());
+        }
+    }
+
+
+    public boolean allowVerify(String productCode,String ip){
+        String key = Constant.ACC.ACC_PREFIX+productCode;
+        return redisTemplate.opsForSet().isMember(key,ip);
     }
 
 

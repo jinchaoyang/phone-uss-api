@@ -3,11 +3,9 @@ package com.renhe.tenant.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.renhe.tenant.entity.Tenant;
-import com.renhe.tenant.entity.TenantProduct;
 import com.renhe.tenant.mapper.TenantMapper;
 import com.renhe.tenant.vo.TenantVo;
 import com.renhe.utils.Constant;
-import com.renhe.utils.DateUtil;
 import com.renhe.utils.IDUtil;
 import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +48,55 @@ public class TenantService {
     public int save(Tenant tenant){
         tenant.setId(IDUtil.generate());
         tenant.setStatus("1");
-        return tenantMapper.save(tenant);
+        tenant.setBalance(0l);
+        if(null==tenant.getOverdraft()){
+            tenant.setOverdraft(0l);
+        }
+        tenant.setOverdraft(tenant.getOverdraft()*1000);
+        int result = tenantMapper.save(tenant);
+        if(result >0 ){
+            this.updateCache(tenant);
+        }
+        return result;
     }
 
 
     public int update(Tenant tenant){
-        return tenantMapper.update(tenant);
+        tenant.setOverdraft(tenant.getOverdraft()*1000);
+        int result =  tenantMapper.update(tenant);
+
+        if(StringUtil.isPresent(tenant.getIp())){
+            this.updateCache(tenant);
+        }
+
+        return result;
     }
 
     public int destroy(String id){
-        return tenantMapper.destroy(id);
+
+        int result =  tenantMapper.destroy(id);
+        if(result>0){
+            this.removeCache(id);
+        }
+        return result;
+    }
+
+
+    public void updateCache(Tenant tenant){
+        String key = Constant.ACC.ACC_PREFIX+tenant.getId();
+        redisTemplate.opsForHash().put(Constant.ACC.ACC_IPS_DICNAME,tenant.getIp(),tenant.getId());
+        redisTemplate.opsForHash().put(key,"ip",tenant.getIp());
+        redisTemplate.opsForHash().put(key,"overdraft",tenant.getOverdraft().toString());
+
+    }
+
+    public void removeCache(String tenantId){
+        String key =  Constant.ACC.ACC_PREFIX + tenantId;
+        String ip = redisTemplate.opsForHash().get(key,"ip").toString();
+        redisTemplate.opsForHash().delete(Constant.ACC.ACC_IPS_DICNAME,ip);
+        redisTemplate.delete(key);
+
+
     }
 
 
