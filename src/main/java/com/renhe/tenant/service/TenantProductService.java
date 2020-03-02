@@ -159,6 +159,9 @@ public class TenantProductService {
                 this.renew(tenantProduct);
             }
              long amount = tenantProduct.getFee()*tenantProduct.getDuration();
+            if(tenantProduct.getFeeType().equals("2")){
+                amount = 0l;
+            }
             TenantTrade tradeLog = new TenantTrade();
             tradeLog.setCreatorId(tenantProduct.getCreatorId());
             tradeLog.setAmount(amount/10000);
