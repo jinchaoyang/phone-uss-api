@@ -23,6 +23,10 @@ public class TenantTradeService {
     @Autowired
     TenantTradeMapper mapper;
 
+
+    @Autowired
+    TenantProductService tenantProductService;
+
     @Autowired
     StringRedisTemplate redisTemplate;
 
@@ -44,7 +48,7 @@ public class TenantTradeService {
         String tradeId = null;
         int result = 0;
         tenantTrade.setId(IDUtil.generate());
-        tenantTrade.setAmount(tenantTrade.getAmount()*1000);
+        tenantTrade.setAmount(tenantTrade.getAmount()*10000);
         result = mapper.save(tenantTrade);
         if(result>0){
             Map<String,Object> params = new HashMap<>();
@@ -63,6 +67,7 @@ public class TenantTradeService {
     public int charge(Map<String,Object> params){
         int result =  mapper.charge(params);
         this.updateCache(params,1);
+        tenantProductService.activeTenantProduct(params.get("tenantId").toString());
         return result;
     }
 

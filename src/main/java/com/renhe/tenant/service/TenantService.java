@@ -52,7 +52,7 @@ public class TenantService {
         if(null==tenant.getOverdraft()){
             tenant.setOverdraft(0l);
         }
-        tenant.setOverdraft(tenant.getOverdraft()*1000);
+        tenant.setOverdraft(tenant.getOverdraft()*10000);
         int result = tenantMapper.save(tenant);
         if(result >0 ){
             this.updateCache(tenant);
@@ -62,7 +62,7 @@ public class TenantService {
 
 
     public int update(Tenant tenant){
-        tenant.setOverdraft(tenant.getOverdraft()*1000);
+        tenant.setOverdraft(tenant.getOverdraft()*10000);
         int result =  tenantMapper.update(tenant);
 
         if(StringUtil.isPresent(tenant.getIp())){

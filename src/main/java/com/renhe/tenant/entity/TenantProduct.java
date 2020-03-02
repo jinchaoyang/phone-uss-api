@@ -98,6 +98,9 @@ public class TenantProduct implements Serializable {
     @Transient
     private int duration;
 
+    @Transient
+    private String feeDesc;
+
 
     public String getId() {
         return id;
@@ -225,6 +228,14 @@ public class TenantProduct implements Serializable {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public String getFeeDesc() {
+        return feeDesc;
+    }
+
+    public void setFeeDesc(String feeDesc) {
+        this.feeDesc = feeDesc;
     }
 }
 

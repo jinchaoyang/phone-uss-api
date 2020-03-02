@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +123,9 @@ public class TenantProductService {
             LocalDateTime begin = DateUtil.getDateTime(beginAt,pattern);
             LocalDateTime end = DateUtil.plusMonths(begin,tenantProduct.getDuration());
             _product.setExpireAt(DateUtil.localDateTimeFormat(end,pattern));
-            _product.setFee(tenantProduct.getFee()*1000);
+            BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(10000));
+            _product.setFee(bigDecimal.intValue());
+
             result = this.update(_product);
 
         }
@@ -136,8 +139,9 @@ public class TenantProductService {
         int code = 0;
         Tenant tenant = tenantService.findById(tenantProduct.getTenantId());
         long total = tenant.getBalance()+tenant.getOverdraft();
-        tenantProduct.setFee(tenantProduct.getFee()*1000);
-        if(tenantProduct.getFeeType().equals("2") && total < 10*1000){ //按量计费,小于10元不能开通
+        BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(10000));
+        tenantProduct.setFee(bigDecimal.intValue());
+        if(tenantProduct.getFeeType().equals("2") && total < 10*10000){ //按量计费,小于10元不能开通
             message = "账户可用余额必需大于10元";
             code = 1001;
         }else{
@@ -157,7 +161,7 @@ public class TenantProductService {
              long amount = tenantProduct.getFee()*tenantProduct.getDuration();
             TenantTrade tradeLog = new TenantTrade();
             tradeLog.setCreatorId(tenantProduct.getCreatorId());
-            tradeLog.setAmount(amount/1000);
+            tradeLog.setAmount(amount/10000);
             tradeLog.setTenantId(tenantProduct.getTenantId());
             tradeLog.setTradeType("2");
             String tradeId = tradeService.save(tradeLog);
@@ -199,6 +203,20 @@ public class TenantProductService {
             redisTemplate.opsForSet().add(key,tenant.getIp());
         }else{
             redisTemplate.opsForSet().remove(key,tenant.getIp());
+        }
+    }
+
+
+    public void activeTenantProduct(String tenantId){
+        TenantProductVo vo = new TenantProductVo();
+        vo.setTenantId(tenantId);
+        vo.setFeeType("2");
+        Tenant tenant = tenantService.findById(tenantId);
+        List<TenantProduct> products = tenantProductMapper.queryByParams(vo);
+        if(null!=products && !products.isEmpty() && null!=tenant){
+            for(TenantProduct p : products){
+                this.updateCache(p,tenant,0);
+            }
         }
     }
 
