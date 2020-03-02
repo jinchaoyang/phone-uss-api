@@ -43,7 +43,7 @@ public class VipController {
                 reader.close();
             }else{
                 result.put("forbid",1);
-                result.put("message","No Permission");
+                result.put("message","No Resource");
             }
         } catch (IOException e) {
             logger.error("IOException",e);
