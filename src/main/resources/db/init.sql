@@ -114,6 +114,8 @@ create table usr_resource(
   visbile int(1) default 1 comment '是否可见',
   parent_id varchar(32) default null comment '父亲节点',
   seq int(2) default 0 comment '排序',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
   primary key(id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
@@ -133,6 +135,15 @@ create table usr_user_role(
   primary key(user_id,role_id)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
+
+drop table usr_role;
+create table usr_role(
+  id varchar(32) not null comment '主键',
+  name varchar(32) not null comment '角色名称',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
+  primary key(id)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 
 

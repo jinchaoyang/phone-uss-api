@@ -1,6 +1,7 @@
 package com.renhe.security.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 权限菜单管理
@@ -40,7 +41,7 @@ public class Resource implements Serializable {
     /**
      *  是否可见
      */
-    private int visible;
+    private Integer visible;
 
     /**
      * 父亲节点
@@ -51,7 +52,11 @@ public class Resource implements Serializable {
     /**
      * 排序
      */
-    private int seq;
+    private Integer seq;
+
+    private Date createdAt;
+
+    private Date updatedAt;
 
 
     public String getId() {
@@ -102,14 +107,6 @@ public class Resource implements Serializable {
         this.icon = icon;
     }
 
-    public int getVisible() {
-        return visible;
-    }
-
-    public void setVisible(int visible) {
-        this.visible = visible;
-    }
-
     public String getParentId() {
         return parentId;
     }
@@ -118,11 +115,35 @@ public class Resource implements Serializable {
         this.parentId = parentId;
     }
 
-    public int getSeq() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Integer visible) {
+        this.visible = visible;
+    }
+
+    public Integer getSeq() {
         return seq;
     }
 
-    public void setSeq(int seq) {
+    public void setSeq(Integer seq) {
         this.seq = seq;
     }
 }

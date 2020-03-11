@@ -73,6 +73,18 @@
         where id = #{id}
     </update>
 
+    <insert id="bind" parameterType="java.util.Map">
+        insert into usr_user_role(user_id,role_id)
+        values
+        <foreach collection="roleIds" item="item" separator=",">
+            (#{userId},#{item})
+        </foreach>
+    </insert>
+
+    <delete id="release" parameterType="string">
+        delete from usr_user_role where user_id = #{userId}
+    </delete>
+
 
 
 
