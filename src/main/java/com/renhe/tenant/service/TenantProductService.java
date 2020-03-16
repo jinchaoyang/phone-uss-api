@@ -141,6 +141,7 @@ public class TenantProductService {
         long total = tenant.getBalance()+tenant.getOverdraft();
         BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(10000));
         tenantProduct.setFee(bigDecimal.intValue());
+        tenantProduct.setDissipation(new BigDecimal(tenantProduct.getDissipationDesc()).multiply(new BigDecimal(10000)).longValue());
         if(tenantProduct.getFeeType().equals("2") && total < 10*10000){ //按量计费,小于10元不能开通
             message = "账户可用余额必需大于10元";
             code = 1001;

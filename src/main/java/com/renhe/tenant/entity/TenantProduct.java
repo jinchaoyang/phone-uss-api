@@ -95,11 +95,26 @@ public class TenantProduct implements Serializable {
     private String appKey;
 
 
+
     @Transient
     private int duration;
 
     @Transient
     private String feeDesc;
+
+
+    @Transient
+    private String dissipationDesc;
+
+    /**
+     * 最低消费
+     */
+    private Long dissipation;
+
+    /**
+     * 下个扣费日期
+     */
+    private String costDate;
 
 
     public String getId() {
@@ -236,6 +251,30 @@ public class TenantProduct implements Serializable {
 
     public void setFeeDesc(String feeDesc) {
         this.feeDesc = feeDesc;
+    }
+
+    public Long getDissipation() {
+        return dissipation;
+    }
+
+    public void setDissipation(Long dissipation) {
+        this.dissipation = dissipation;
+    }
+
+    public String getCostDate() {
+        return costDate;
+    }
+
+    public void setCostDate(String costDate) {
+        this.costDate = costDate;
+    }
+
+    public String getDissipationDesc() {
+        return dissipationDesc;
+    }
+
+    public void setDissipationDesc(String dissipationDesc) {
+        this.dissipationDesc = dissipationDesc;
     }
 }
 

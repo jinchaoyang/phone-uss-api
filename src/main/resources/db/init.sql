@@ -53,6 +53,8 @@ create table acc_tenant_product(
   status varchar(8) not null comment '状态，1：可用 0：不可用',
   app_id varchar(64) default null comment 'APPID',
   app_key varchar(128) default null comment '密钥',
+  dissipation int(20) default null comment '最低消费',
+  costDate varchar(20) default null comment '低消的下个扣费时间',
   creator_id varchar(32) default null comment '创建人',
   operator_id varchar(32) default null comment '最近操作人',
   created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
