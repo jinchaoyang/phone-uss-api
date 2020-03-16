@@ -1,7 +1,11 @@
 package com.renhe.security.entity;
 
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 权限菜单管理
@@ -58,6 +62,8 @@ public class Resource implements Serializable {
 
     private Date updatedAt;
 
+    @Transient
+    private List<Resource> children;
 
     public String getId() {
         return id;
@@ -145,5 +151,13 @@ public class Resource implements Serializable {
 
     public void setSeq(Integer seq) {
         this.seq = seq;
+    }
+
+    public List<Resource> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Resource> children) {
+        this.children = children;
     }
 }
