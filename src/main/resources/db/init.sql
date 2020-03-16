@@ -105,6 +105,47 @@ create table acc_tenant_bill(
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 
+drop table usr_resource;
+create table usr_resource(
+  id varchar(32) not null comment '主键',
+  name varchar(32) not null comment '资源名称',
+  code varchar(32) not null comment '资源编码',
+  type varchar(8) not null comment '资源类型，MENU:菜单 ACTION:按钮',
+  url varchar(4) default null comment '资源地址' ,
+  icon varchar(32) default null comment '资源图标',
+  visbile int(1) default 1 comment '是否可见',
+  parent_id varchar(32) default null comment '父亲节点',
+  seq int(2) default 0 comment '排序',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
+  primary key(id)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+drop table usr_role_resource;
+create table usr_role_resource(
+  role_id varchar(32) not null comment '角色ID',
+  resource_id varchar(32) not null comment '资源ID',
+  primary key(role_id,resource_id)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+drop table usr_user_role;
+create table usr_user_role(
+  user_id varchar(32) not null comment '用户ID',
+  role_id varchar(32) not null comment '角色ID',
+  primary key(user_id,role_id)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
+drop table usr_role;
+create table usr_role(
+  id varchar(32) not null comment '主键',
+  name varchar(32) not null comment '角色名称',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
+  primary key(id)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 
 

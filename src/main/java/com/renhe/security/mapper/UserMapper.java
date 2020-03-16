@@ -26,6 +26,9 @@ public interface UserMapper {
 
     int destroy(String id);
 
+    int bind(Map<String,Object> params);
+
+    int release(String userId);
 
 
 }

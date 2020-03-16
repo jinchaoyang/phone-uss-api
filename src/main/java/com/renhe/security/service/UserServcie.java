@@ -94,6 +94,17 @@ public class UserServcie  {
      }
 
 
+     public int bindRoles(String userId,List<String> roleIds){
+         Map<String,Object> params = new HashMap<>();
+         params.put("userId",userId);
+         params.put("roleIds",roleIds);
+         return userMapper.bind(params);
+     }
+
+     public int releaseRoles(String userId){
+         return userMapper.release(userId);
+     }
+
 
 
 }
