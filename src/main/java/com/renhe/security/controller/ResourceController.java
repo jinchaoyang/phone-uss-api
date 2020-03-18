@@ -1,6 +1,7 @@
 package com.renhe.security.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageInfo;
 import com.renhe.base.Result;
 import com.renhe.security.entity.Resource;
@@ -143,5 +144,25 @@ public class ResourceController {
         result.setCode(rcode);
         return result;
 
+    }
+
+    @GetMapping("/tree")
+    public Result<JSONArray> getResourceTree(){
+        Result<JSONArray> result = new Result<>();
+        int rcode = -1;
+        try{
+            JSONArray array = new JSONArray();
+            List<Resource> resourceList = resourceService.buildTree();
+            if(null!=resourceList){
+                array = resourceService.assemblyTree(resourceList);
+            }
+            result.setData(array);
+            rcode = 0;
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            logger.error("[getTreeException]",e);
+        }
+        result.setCode(rcode);
+        return result;
     }
 }

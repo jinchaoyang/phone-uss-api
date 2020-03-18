@@ -3,41 +3,34 @@
 <mapper namespace="com.renhe.security.mapper.RoleMapper" >
 
     <sql id="baseColumnSql">
-        id,name,code,type,url,icon,visible,parent_id,seq,created_at,updated_at
+        id,name,created_at,updated_at
     </sql>
 
 
-    <select id="findById" parameterType="string" resultType="com.renhe.security.entity.Resource" >
+    <select id="findById" parameterType="string" resultType="com.renhe.security.entity.Role" >
         select
         <include refid="baseColumnSql"/>
-        from usr_resource where id = #{id}
+        from usr_role where id = #{id}
     </select>
 
 
-    <select id="queryByParams" parameterType="com.renhe.security.vo.ResourceVo" resultType="com.renhe.security.entity.Resource" >
+    <select id="queryByParams" parameterType="com.renhe.security.vo.ResourceVo" resultType="com.renhe.security.entity.Role" >
         select
         <include refid="baseColumnSql"/>
-        from usr_resource  where  id is not null
-        <if test="type!='' and type!=null">
-            and type = #{type}
+        from usr_role  where  id is not null
+        <if test="name!=null and name !=''">
+            and name like concat('%',name,'%')
         </if>
-        order by seq
+        order by created_at desc
     </select>
 
-    <insert id="save" parameterType="com.renhe.security.entity.Resource">
-         insert into usr_resource
+    <insert id="save" parameterType="com.renhe.security.entity.Role">
+         insert into usr_role
          (
-            id,name,code,type,url,icon,visible,parent_id,seq,created_at,updated_at
+            id,name,created_at,updated_at
          )values(
             #{id},
             #{name},
-            #{code},
-            #{type},
-            #{url},
-            #{icon},
-            #{visible},
-            #{parentId},
-            #{seq},
             #{createdAt},
             #{updatedAt}
 
@@ -45,50 +38,39 @@
     </insert>
 
     <update id="destroy" parameterType="string">
-       delete from usr_resource where id = #{id}
+       delete from usr_role where id = #{id}
     </update>
 
-    <update id="update" parameterType="com.renhe.security.entity.Resource">
+    <update id="update" parameterType="com.renhe.security.entity.Role">
         update usr_resource
         <set>
             <if test="name!=null">
                 name = #{name},
-            </if>
-            <if test="code!=null">
-                code = #{code},
-            </if>
-            <if test="type!=null">
-                type = #{type},
-            </if>
-            <if test="url!=null">
-                url = #{url},
-            </if>
-            <if test="icon!=null">
-                icon = #{icon},
-            </if>
-            <if test="visible!=null">
-                visible = #{visible},
-            </if>
-            <if test="seq!=null">
-                seq = #{seq},
             </if>
 
         </set>
         where id = #{id}
     </update>
 
-    <insert id="bind" parameterType="java.util.Map">
-        insert into usr_role_resource(role_id,resource_id)
-        values
-        <foreach collection="resourceIds" item="item" separator=",">
-            (#{roleId},#{item})
+
+    <select id="findByRoleId" parameterType="string">
+        select
+         a.id, a.name, a.code, a.type, a.url, a.icon, a.visible, a.parent_id, a.seq, a.created_at, a.updated_at
+        from  usr_resource a,usr_role_resource b
+        where a.id = b.resource_id
+        and b.role_id = #{roleId}
+    </select>
+
+    <select id="findByRoleIds" parameterType="java.util.List">
+        select
+         a.id, a.name, a.code, a.type, a.url, a.icon, a.visible, a.parent_id, a.seq, a.created_at, a.updated_at
+        from  usr_resource a,usr_role_resource b
+        where a.id = b.resource_id
+        and b.role_id in
+        <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+            #{item}
         </foreach>
-    </insert>
-
-    <delete id="release" parameterType="string">
-        delete from usr_role_resource where role_id = #{roleId}
-    </delete>
-
+    </select>
 
 
 

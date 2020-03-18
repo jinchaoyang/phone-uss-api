@@ -85,6 +85,10 @@
         delete from usr_user_role where user_id = #{userId}
     </delete>
 
+    <select id="findRoleIds" parameterType="string">
+       select role_id from usr_user_role where user_id = #{userId}
+    </select>
+
 
 
 

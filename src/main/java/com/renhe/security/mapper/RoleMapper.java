@@ -1,5 +1,6 @@
 package com.renhe.security.mapper;
 
+import com.renhe.security.entity.Resource;
 import com.renhe.security.entity.Role;
 import com.renhe.security.vo.RoleVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,6 +26,10 @@ public interface RoleMapper {
     int bind(Map<String,Object> params);
 
     int release(String roleId);
+
+    List<Resource> findByRoleId(String roleId);
+
+    List<Resource> findByRoleIds(List<String> roleIds);
 
 
 }

@@ -3,7 +3,7 @@
 <mapper namespace="com.renhe.security.mapper.ResourceMapper" >
 
     <sql id="baseColumnSql">
-        id,name,code,type,url,icon,visible,parent_id,seq,created_at,updated_at
+        id,name,code,type,url,icon,visible,parent_id,seq,created_at,updated_at,level
     </sql>
 
 
@@ -21,13 +21,19 @@
         <if test="type!='' and type!=null">
             and type = #{type}
         </if>
+        <if test="level!=null">
+            and level = #{level}
+        </if>
+        <if test="parentNodes!=null">
+            and level in (1,2)
+        </if>
         order by seq
     </select>
 
     <insert id="save" parameterType="com.renhe.security.entity.Resource">
          insert into usr_resource
          (
-            id,name,code,type,url,icon,visible,parent_id,seq,created_at,updated_at
+            id,name,code,type,url,icon,visible,parent_id,seq,created_at,updated_at,level
          )values(
             #{id},
             #{name},
@@ -39,7 +45,8 @@
             #{parentId},
             #{seq},
             #{createdAt},
-            #{updatedAt}
+            #{updatedAt},
+            #{level}
 
          )
     </insert>
@@ -71,6 +78,9 @@
             </if>
             <if test="seq!=null">
                 seq = #{seq},
+            </if>
+            <if test="level!=null">
+                level = #{level},
             </if>
 
         </set>

@@ -1,6 +1,7 @@
 package com.renhe.security.mapper;
 
 
+import com.renhe.security.entity.Role;
 import com.renhe.security.entity.User;
 import com.renhe.base.PagerRS;
 import com.renhe.security.vo.UserVo;
@@ -29,6 +30,8 @@ public interface UserMapper {
     int bind(Map<String,Object> params);
 
     int release(String userId);
+
+    List<String> findRoleIds(String userId);
 
 
 }

@@ -2,6 +2,7 @@ package com.renhe.security.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.renhe.security.entity.Resource;
 import com.renhe.security.entity.Role;
 import com.renhe.security.mapper.RoleMapper;
 import com.renhe.security.vo.RoleVo;
@@ -86,6 +87,22 @@ public class RoleService {
 
     public int releaseResources(String roleId){
         return roleMapper.release(roleId);
+    }
+
+    public List<Resource> findByRoleId(String roleId){
+        return roleMapper.findByRoleId(roleId);
+    }
+
+    public List<Resource> findByRoleIds(List<String> roleIds){
+        return roleMapper.findByRoleIds(roleIds);
+    }
+
+    public void buildResourceTree(List<String> roleIds){
+        List<Resource> resourceList = this.findByRoleIds(roleIds);
+        if(resourceList!=null && !resourceList.isEmpty()){
+
+        }
+
     }
 
 }

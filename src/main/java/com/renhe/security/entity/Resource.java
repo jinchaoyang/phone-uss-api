@@ -65,6 +65,8 @@ public class Resource implements Serializable {
     @Transient
     private List<Resource> children;
 
+    private int level;
+
     public String getId() {
         return id;
     }
@@ -159,5 +161,13 @@ public class Resource implements Serializable {
 
     public void setChildren(List<Resource> children) {
         this.children = children;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }
