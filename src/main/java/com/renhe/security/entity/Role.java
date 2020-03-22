@@ -1,7 +1,10 @@
 package com.renhe.security.entity;
 
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户角色表
@@ -37,6 +40,12 @@ public class Role implements Serializable {
      * 更新时间
      */
     private Date updatedAt;
+
+    /**
+     * 资源IDS
+     */
+    @Transient
+    private List<String> resourceIds;
 
     public String getId() {
         return id;
@@ -84,5 +93,13 @@ public class Role implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<String> getResourceIds() {
+        return resourceIds;
+    }
+
+    public void setResourceIds(List<String> resourceIds) {
+        this.resourceIds = resourceIds;
     }
 }

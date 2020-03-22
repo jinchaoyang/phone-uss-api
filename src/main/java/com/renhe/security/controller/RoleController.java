@@ -3,6 +3,7 @@ package com.renhe.security.controller;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.renhe.base.Result;
+import com.renhe.security.entity.Resource;
 import com.renhe.security.entity.Role;
 import com.renhe.security.service.RoleService;
 import com.renhe.security.vo.RoleVo;
@@ -10,6 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -130,6 +135,15 @@ public class RoleController  {
         int rcode = -1;
         try{
             Role role = roleService.findById(id);
+            if(null!=role){
+               List<Resource> resources = roleService.findByRoleId(id);
+               if(null!=resources && !resources.isEmpty()){
+                  List<String> rids =  resources.stream().map(e -> e.getId()).collect(Collectors.toList());
+                  role.setResourceIds(rids);
+               }else{
+                   role.setResourceIds(new ArrayList<>(0));
+               }
+            }
             result.setData(role);
             rcode = 0;
         }catch (Exception e){

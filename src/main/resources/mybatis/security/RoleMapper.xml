@@ -14,7 +14,7 @@
     </select>
 
 
-    <select id="queryByParams" parameterType="com.renhe.security.vo.ResourceVo" resultType="com.renhe.security.entity.Role" >
+    <select id="queryByParams" parameterType="com.renhe.security.vo.RoleVo" resultType="com.renhe.security.entity.Role" >
         select
         <include refid="baseColumnSql"/>
         from usr_role  where  id is not null
@@ -42,7 +42,7 @@
     </update>
 
     <update id="update" parameterType="com.renhe.security.entity.Role">
-        update usr_resource
+        update usr_role
         <set>
             <if test="name!=null">
                 name = #{name},
@@ -53,7 +53,7 @@
     </update>
 
 
-    <select id="findByRoleId" parameterType="string">
+    <select id="findByRoleId" parameterType="string" resultType="com.renhe.security.entity.Resource">
         select
          a.id, a.name, a.code, a.type, a.url, a.icon, a.visible, a.parent_id, a.seq, a.created_at, a.updated_at
         from  usr_resource a,usr_role_resource b
@@ -61,7 +61,7 @@
         and b.role_id = #{roleId}
     </select>
 
-    <select id="findByRoleIds" parameterType="java.util.List">
+    <select id="findByRoleIds" parameterType="java.util.List" resultType="com.renhe.security.entity.Resource">
         select
          a.id, a.name, a.code, a.type, a.url, a.icon, a.visible, a.parent_id, a.seq, a.created_at, a.updated_at
         from  usr_resource a,usr_role_resource b
@@ -71,6 +71,18 @@
             #{item}
         </foreach>
     </select>
+
+    <insert id="bind" parameterType="java.util.Map">
+        insert into usr_role_resource(role_id,resource_id)
+        values
+        <foreach collection="resourceIds" item="item" separator=",">
+            (#{roleId},#{item})
+        </foreach>
+    </insert>
+
+    <delete id="release" parameterType="string">
+        delete from usr_role_resource where role_id = #{roleId}
+    </delete>
 
 
 

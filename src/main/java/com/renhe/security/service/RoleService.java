@@ -9,6 +9,7 @@ import com.renhe.security.vo.RoleVo;
 import com.renhe.utils.IDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +46,12 @@ public class RoleService {
      * @param role
      * @return
      */
+    @Transactional
     public int save(Role role){
         role.setId(IDUtil.generate());
-        return roleMapper.save(role);
+        int result = roleMapper.save(role);
+        this.bindResources(role.getId(),role.getResourceIds());
+        return result;
     }
 
     /**
@@ -55,8 +59,11 @@ public class RoleService {
      * @param id
      * @return
      */
+    @Transactional
     public int destroy(String id){
-        return roleMapper.destroy(id);
+        int result =  roleMapper.destroy(id);
+        roleMapper.release(id);
+        return result;
     }
 
     /**
@@ -73,8 +80,12 @@ public class RoleService {
      * @param role
      * @return
      */
+    @Transactional
     public int update(Role role){
-        return roleMapper.update(role);
+        int result =  roleMapper.update(role);
+        roleMapper.release(role.getId());
+        this.bindResources(role.getId(),role.getResourceIds());
+        return result;
     }
 
 
