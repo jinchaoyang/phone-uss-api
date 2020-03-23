@@ -1,7 +1,11 @@
 package com.renhe.security.entity;
 
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 运营管理用户信息
@@ -51,6 +55,9 @@ public class User implements Serializable {
      * 角色名称
      */
     private String role;
+
+    @Transient
+    private List<String> roleIds = new ArrayList<>();
 
 
     public String getId() {
@@ -123,5 +130,13 @@ public class User implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<String> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(List<String> roleIds) {
+        this.roleIds = roleIds;
     }
 }

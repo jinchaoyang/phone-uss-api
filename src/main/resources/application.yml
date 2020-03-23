@@ -32,6 +32,7 @@ mybatis:
   type-aliases-package: com.petbanny
   configuration:
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 cus:
   phonePrefix: /Users/jinchaoyang/Desktop/phone_cube/data/mobilearea-1152.txt
   phonePath: /Users/jinchaoyang/Desktop/phone_cube/data/area

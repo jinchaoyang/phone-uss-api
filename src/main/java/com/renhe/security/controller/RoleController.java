@@ -48,6 +48,28 @@ public class RoleController  {
         return result;
     }
 
+
+    /**
+     * 角色信息列表
+     * @param query
+     * @return
+     */
+    @GetMapping(value="/all")
+    public Result<List<Role>> index(RoleVo query){
+        Result<List<Role>> result = new Result<>();
+        int rcode = -1;
+        List<Role> roles = roleService.queryByParams(query);
+        if(null!=roles){
+            result.setData(roles);
+            rcode =  0 ;
+        }else{
+            result.setMessage("no record");
+        }
+        result.setCode(rcode);
+        return result;
+    }
+
+
     /**
      * 创建角色信息
      * @param role

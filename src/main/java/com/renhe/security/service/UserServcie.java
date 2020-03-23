@@ -9,7 +9,9 @@ import com.renhe.utils.IDUtil;
 import com.renhe.utils.MD5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +61,14 @@ public class UserServcie  {
      * @param user
      * @return
      */
+    @Transactional
     public int save(User user){
         user.setId(IDUtil.generate());
         user.setStatus("USE");
         user.setPassword(MD5.encode(user.getUserName()+user.getPassword()));
-        return userMapper.save(user);
+        int result =  userMapper.save(user);
+        this.bindRoles(user.getId(),user.getRoleIds());
+        return result;
     }
 
     /**
@@ -81,7 +86,14 @@ public class UserServcie  {
      * @return
      */
      public User findById(String id){
-         return userMapper.findById(id);
+         User u =  userMapper.findById(id);
+         if(null!=u){
+           List<String> roleIds = userMapper.findRoleIds(id);
+           if(null!=roleIds && !roleIds.isEmpty()){
+               u.setRoleIds(roleIds);
+           }
+         }
+         return u;
      }
 
     /**
@@ -90,7 +102,10 @@ public class UserServcie  {
      * @return
      */
      public int update(User user){
-         return userMapper.update(user);
+         int result =  userMapper.update(user);
+         this.releaseRoles(user.getId());
+         this.bindRoles(user.getId(),user.getRoleIds());
+         return result;
      }
 
 
@@ -105,6 +120,10 @@ public class UserServcie  {
          return userMapper.release(userId);
      }
 
+
+     public List<String> findRoleIds(String userId){
+         return userMapper.findRoleIds(userId);
+     }
 
 
 }
