@@ -2,6 +2,7 @@ package com.renhe.security.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.renhe.security.entity.Resource;
 import com.renhe.security.entity.User;
 import com.renhe.security.mapper.UserMapper;
 import com.renhe.security.vo.UserVo;
@@ -11,16 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServcie  {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    RoleService roleService;
+
+    @Autowired
+    ResourceService resourceService;
 
     /**
      * 根据用户名和密码查询用户信息
@@ -125,5 +131,59 @@ public class UserServcie  {
          return userMapper.findRoleIds(userId);
      }
 
+     public Map<Resource,List<Resource>> buildMenus(String userId){
+         Map<Resource,List<Resource>> _result = new LinkedHashMap<>();
+         List<String> roleIds = this.findRoleIds(userId);
+         if(null!=roleIds && !roleIds.isEmpty()){
+           List<Resource> resources =  roleService.findByRoleIds(roleIds);
+           List<Resource> firstMenus = new ArrayList<>();
+           List<Resource> secondMenus = new ArrayList<>();
+           Set<String> firstIds = new HashSet<>();
+           Map<String,Resource> map = new HashMap<>();
+           Map<String,List<Resource>> result = new HashMap<>();
+           for(Resource resource : resources){
+               int level = resource.getLevel();
+               String type = resource.getType();
+               if(type.equals("MENU")){
+                   if(level==1){
+                       firstIds.add(resource.getId());
+                       firstMenus.add(resource);
+                       map.put(resource.getId(),resource);
+                       result.put(resource.getId(),new ArrayList<>());
+                   }else if(level==2){
+                       secondMenus.add(resource);
+                       if(!firstMenus.contains(resource.getParentId())){
+                           Resource parent = resourceService.findById(resource.getParentId());
+                           if(null!=parent){
+                               firstMenus.add(parent);
+                               firstIds.add(resource.getParentId());
+                               map.put(resource.getId(),parent);
+
+                           }
+
+                       }
+
+                       List<Resource> nodes = result.getOrDefault(resource.getParentId(),new ArrayList<Resource>());
+                       nodes.add((resource));
+                       result.put(resource.getParentId(),nodes);
+                   }
+               }
+
+           }
+
+           Collections.sort(firstMenus);
+
+           for(Resource r : firstMenus){
+               _result.put(r,result.getOrDefault(r.getId(),new ArrayList<>(0)));
+           }
+
+         }
+         return _result;
+     }
+
+     public List<Resource> getMenusByLevel(List<Resource> resourceList,int level){
+         resourceList = null==resourceList?new ArrayList<>(0): resourceList;
+         return  resourceList.stream().filter( e -> e.getLevel()==1).collect(Collectors.toList());
+     }
 
 }

@@ -1,6 +1,7 @@
 package com.renhe.security.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
@@ -56,6 +57,39 @@ public class LoginController {
         logger.info("[login]: userDto -> {}, result -> {}", JSON.toJSONString(userDto),JSON.toJSONString(result));
         return result;
     }
+
+    /**
+     * 获取用户权限信息
+     * @param request
+     * @return
+     */
+    public Result<JSONArray> getPermissions(HttpServletRequest request){
+        Result<JSONArray>  result = new Result<>();
+        int rcode = -1;
+        String token = null;
+        try{
+            token = request.getHeader("Authorization");
+            if(StringUtil.isPresent(token)){
+                String userId = TokenUtil.getUserId(token);
+                if(StringUtil.isPresent(userId)) {
+                    rcode = 0;
+
+
+                }else{
+                    result.setMessage("token is invalid");
+                }
+            }else{
+                result.setMessage("token parameter can't be null");
+            }
+
+        }catch(Exception e){
+            logger.error("[getPermissions]: token -> {}",token,e);
+            result.setMessage(e.getMessage());
+        }
+        result.setCode(rcode);
+        return result;
+    }
+
 
 
     @PostMapping(value="/logout")

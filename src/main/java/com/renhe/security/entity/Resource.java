@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 权限菜单管理
  */
-public class Resource implements Serializable {
+public class Resource implements Serializable,Comparable<Resource> {
 
     /**
      * 主键
@@ -169,5 +169,10 @@ public class Resource implements Serializable {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    @Override
+    public int compareTo(Resource o) {
+        return this.getSeq() - o.getSeq();
     }
 }
