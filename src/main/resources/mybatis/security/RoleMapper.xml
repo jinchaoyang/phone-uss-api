@@ -63,13 +63,14 @@
 
     <select id="findByRoleIds" parameterType="java.util.List" resultType="com.renhe.security.entity.Resource">
         select
-         a.id, a.name, a.code, a.type, a.url, a.icon, a.visible, a.parent_id, a.seq, a.created_at, a.updated_at
+         a.id, a.name, a.code,a.level, a.type, a.url, a.icon, a.visible, a.parent_id, a.seq, a.created_at, a.updated_at
         from  usr_resource a,usr_role_resource b
         where a.id = b.resource_id
         and b.role_id in
-        <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>
+        order by a.level,a.seq
     </select>
 
     <insert id="bind" parameterType="java.util.Map">

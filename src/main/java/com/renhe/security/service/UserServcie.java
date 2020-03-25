@@ -145,19 +145,18 @@ public class UserServcie  {
                int level = resource.getLevel();
                String type = resource.getType();
                if(type.equals("MENU")){
+                   map.put(resource.getId(),resource);
                    if(level==1){
                        firstIds.add(resource.getId());
                        firstMenus.add(resource);
-                       map.put(resource.getId(),resource);
                        result.put(resource.getId(),new ArrayList<>());
                    }else if(level==2){
                        secondMenus.add(resource);
-                       if(!firstMenus.contains(resource.getParentId())){
+                       if(!firstIds.contains(resource.getParentId())){
                            Resource parent = resourceService.findById(resource.getParentId());
                            if(null!=parent){
                                firstMenus.add(parent);
                                firstIds.add(resource.getParentId());
-                               map.put(resource.getId(),parent);
 
                            }
 

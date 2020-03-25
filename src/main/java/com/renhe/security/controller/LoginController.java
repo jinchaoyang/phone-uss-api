@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
 import com.renhe.security.dto.UserDto;
+import com.renhe.security.entity.Resource;
 import com.renhe.security.entity.User;
 import com.renhe.security.service.UserServcie;
 import com.renhe.utils.MD5;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -63,8 +66,9 @@ public class LoginController {
      * @param request
      * @return
      */
-    public Result<JSONArray> getPermissions(HttpServletRequest request){
-        Result<JSONArray>  result = new Result<>();
+    @GetMapping(value="/permissions")
+    public Result<JSONObject> getPermissions(HttpServletRequest request){
+        Result<JSONObject>  result = new Result<>();
         int rcode = -1;
         String token = null;
         try{
@@ -72,9 +76,10 @@ public class LoginController {
             if(StringUtil.isPresent(token)){
                 String userId = TokenUtil.getUserId(token);
                 if(StringUtil.isPresent(userId)) {
-                    rcode = 0;
-
-
+                   Map<Resource, List<Resource>> menus =  userServcie.buildMenus(userId);
+                   JSONObject obj =  JSONObject.parseObject(JSONObject.toJSONString(menus));
+                   result.setData(obj);
+                   rcode = 0;
                 }else{
                     result.setMessage("token is invalid");
                 }
