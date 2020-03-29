@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -67,8 +69,8 @@ public class LoginController {
      * @return
      */
     @GetMapping(value="/permissions")
-    public Result<JSONObject> getPermissions(HttpServletRequest request){
-        Result<JSONObject>  result = new Result<>();
+    public Result<JSONArray> getPermissions(HttpServletRequest request){
+        Result<JSONArray>  result = new Result<>();
         int rcode = -1;
         String token = null;
         try{
@@ -77,8 +79,15 @@ public class LoginController {
                 String userId = TokenUtil.getUserId(token);
                 if(StringUtil.isPresent(userId)) {
                    Map<Resource, List<Resource>> menus =  userServcie.buildMenus(userId);
-                   JSONObject obj =  JSONObject.parseObject(JSONObject.toJSONString(menus));
-                   result.setData(obj);
+                   JSONArray array  = new JSONArray();
+                   Set<Resource> keys = menus.keySet();
+                   JSONObject obj = null;
+                   for(Resource key : keys){
+                       obj = JSONObject.parseObject(JSON.toJSONString(key));
+                       obj.put("children",menus.getOrDefault(key,new ArrayList<>(0)));
+                       array.add(obj);
+                   }
+                   result.setData(array);
                    rcode = 0;
                 }else{
                     result.setMessage("token is invalid");
