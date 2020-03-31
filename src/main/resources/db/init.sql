@@ -67,7 +67,15 @@ create table acc_tenant_product(
 drop table acc_tenant_setting;
 create table acc_tenant_setting(
   id varchar(32) not null comment '主键,同租户ID',
-  ip varchar(64) not null comment 'IP地址',
+  sip_ip varchar(32) default null comment 'sip服务器IP',
+  sip_port varchar(8) default null comment 'sip服务器端口号',
+  to_ip varchar(32) default null comment '对接服务器IP',
+  to_port varchar(32) default null comment '对接服务器端口',
+  username varchar(16) default null comment '管理员登录名',
+  password varchar(64) default null comment '管理员登录密码',
+  secret_key varchar(64) default null comment '密钥',
+  created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+  updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
   primary key(id)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 

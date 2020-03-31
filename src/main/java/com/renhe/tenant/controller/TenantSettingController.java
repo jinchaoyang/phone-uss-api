@@ -42,27 +42,6 @@ public class TenantSettingController {
         return result;
     }
 
-    /**
-     * 保存对象
-     * @param setting
-     * @return
-     */
-    @PostMapping(value="")
-    public Result<Integer> save(@RequestBody  TenantSetting setting){
-        Result<Integer> result = new Result<>();
-        int rcode = -1;
-        try{
-            int data = service.save(setting);
-            result.setData(data);
-            rcode = 0;
-
-        }catch (Exception e){
-            logger.error("[save]: setting -> {}", JSON.toJSONString(setting),e);
-            result.setMessage(e.getMessage());
-        }
-        result.setCode(rcode);
-        return result;
-    }
 
     /**
      * 更新对象
@@ -70,11 +49,17 @@ public class TenantSettingController {
      * @return
      */
     @PutMapping(value="/{id}")
-    public Result<Integer> update(@RequestBody  TenantSetting setting){
+    public Result<Integer> update(@PathVariable("id") String id,@RequestBody  TenantSetting setting){
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            int data = service.update(setting);
+            TenantSetting tenantSetting = service.findById(id);
+            int data = -1;
+            if(null==tenantSetting){
+                data = service.save(setting);
+            }else {
+                data = service.update(setting);
+            }
             result.setData(data);
             rcode = 0;
 

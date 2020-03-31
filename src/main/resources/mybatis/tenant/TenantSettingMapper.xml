@@ -4,7 +4,7 @@
 
 
     <sql id="baseColumnSql">
-        id,ip
+        id,sip_ip,sip_port,to_ip,to_port,username,password,secret_key
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.TenantSetting" >
@@ -16,25 +16,21 @@
     </select>
 
 
-    <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantSettingVo" resultType="com.renhe.tenant.entity.TenantSetting" >
-        select
-        <include refid="baseColumnSql"/>
-        from acc_tenant_setting
-        where  id is not null
-        <if test="id !=null">
-            and id = #{id}
-        </if>
-
-
-    </select>
-
     <insert id="save" parameterType="com.renhe.tenant.entity.TenantProduct">
          insert into acc_tenant_setting
          (
-           id,ip
+           id,sip_ip,sip_port,to_ip,to_port,username,password,secret_key,created_at,updated_at
          )values(
             #{id},
-            #{ip}
+            #{sipIp},
+            #{sipPort},
+            #{toIp},
+            #{toPort},
+            #{username},
+            #{password},
+            #{secretKey},
+            #{createdAt},
+            #{updatedAt}
          )
     </insert>
 
@@ -43,8 +39,26 @@
     <update id="update" parameterType="com.renhe.tenant.entity.TenantSetting">
         update acc_tenant_setting
         <set>
-            <if test="ip!=null">
-                ip = #{ip},
+            <if test="sipIp!=null">
+               sip_ip = #{sipIp}
+            </if>
+            <if test="sipPort!=null">
+                sip_port = #{sipPort}
+            </if>
+            <if test="toIp!=null">
+                to_ip = #{toIp}
+            </if>
+            <if test="toPort!=null">
+                to_port = #{toPort}
+            </if>
+            <if test="username!=null">
+                username = #{username}
+            </if>
+            <if test="password!=null">
+                password = #{password}
+            </if>
+            <if test="secretKey!=null">
+                secret_key = #{secretKey}
             </if>
         </set>
         where id = #{id}

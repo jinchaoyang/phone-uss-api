@@ -100,18 +100,7 @@ public class TenantService {
     }
 
 
-    public boolean allowVerify(String ip,String productType){
-        String tenantId = tenantSettingService.getTenantByIp(ip);
-        boolean result  = false;
-        if(StringUtil.isPresent(tenantId)){
-            if(productType.equals("1001")) {
-                result = redisTemplate.opsForSet().isMember(Constant.CHECKER.IP_LIST_NAME, ip);
-            }
 
-        }
-
-        return result;
-    }
 
 
 
