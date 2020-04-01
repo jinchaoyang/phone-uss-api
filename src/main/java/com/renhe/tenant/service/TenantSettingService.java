@@ -3,14 +3,13 @@ package com.renhe.tenant.service;
 import com.renhe.tenant.entity.TenantSetting;
 import com.renhe.tenant.mapper.TenantSettingMapper;
 import com.renhe.tenant.vo.TenantSettingVo;
+import com.renhe.utils.MD5;
 import com.renhe.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TenantSettingService {
@@ -25,12 +24,19 @@ public class TenantSettingService {
     TenantProductService tenantProductService;
 
     public int save(TenantSetting setting){
+        if(StringUtil.isPresent(setting.getPassword())){
+            String password = MD5.encode(setting.getUsername()+setting.getPassword());
+            setting.setPassword(password);
+        }
         return  mapper.save(setting);
 
     }
 
     public int update(TenantSetting setting){
         TenantSetting _tmp = this.findById(setting.getId());
+        if(!_tmp.getPassword().equals(setting.getPassword())){
+            setting.setPassword(MD5.encode(setting.getUsername()+setting.getPassword()));
+        }
         return mapper.update(setting);
 
     }
