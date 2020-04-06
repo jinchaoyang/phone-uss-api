@@ -4,10 +4,8 @@ import com.renhe.utils.StringUtil;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-
-@Document(collection = "cc_black_record")
-public class BlackRecordVo implements Serializable {
-
+@Document(collection = "cc_vip_record")
+public class VipRecordVo implements Serializable {
     /**
      * 租户ID
      */

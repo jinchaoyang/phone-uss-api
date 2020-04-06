@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
-import com.renhe.security.entity.User;
-import com.renhe.security.service.UserServcie;
+import com.renhe.security.entity.TenantUser;
+import com.renhe.security.service.TenantUserServcie;
 import com.renhe.security.vo.UserVo;
 import com.renhe.utils.MD5;
 import com.renhe.utils.StringUtil;
@@ -22,12 +22,12 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping(value="/user")
-public class UserController  {
+public class TenantUserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TenantUserController.class);
 
     @Autowired
-    UserServcie userServcie;
+    TenantUserServcie tenantUserServcie;
 
     /**
      * 用户信息列表
@@ -37,10 +37,10 @@ public class UserController  {
      * @return
      */
     @GetMapping(value="/list")
-    public Result<PageInfo<User>> index(UserVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
-        Result<PageInfo<User>> result = new Result<>();
+    public Result<PageInfo<TenantUser>> index(UserVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
+        Result<PageInfo<TenantUser>> result = new Result<>();
         int rcode = -1;
-        PageInfo<User> userPageInfo = userServcie.queryPager(query,pageNo,pageSize);
+        PageInfo<TenantUser> userPageInfo = tenantUserServcie.queryPager(query,pageNo,pageSize);
         if(null!=userPageInfo){
             result.setData(userPageInfo);
             rcode =  0 ;
@@ -57,12 +57,18 @@ public class UserController  {
      * @return
      */
     @PostMapping("")
-    public Result<Integer> save(@RequestBody User user){
+    public Result<Integer> save(@RequestBody TenantUser user,HttpServletRequest request){
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            userServcie.save(user);
-            rcode = 0;
+            String token = request.getHeader("Authorization");
+            if(StringUtil.isPresent(token)) {
+                String tenantId = TokenUtil.getTenantId(token);
+                user.setTenantId(tenantId);
+                tenantUserServcie.save(user);
+                rcode = 0;
+            }
+
         }catch(Exception e){
             result.setMessage(e.getMessage());
             logger.error("[saveException]: user -> {}", JSON.toJSONString(user),e);
@@ -77,11 +83,11 @@ public class UserController  {
      * @return
      */
     @GetMapping(value="/{id}")
-    public Result<User> findById(@PathVariable String id){
-        Result<User> result = new Result<>();
+    public Result<TenantUser> findById(@PathVariable String id){
+        Result<TenantUser> result = new Result<>();
         int rcode = -1;
         try{
-            User user = userServcie.findById(id);
+            TenantUser user = tenantUserServcie.findById(id);
             if(null!=user){
                 rcode = 0;
                 result.setData(user);
@@ -103,15 +109,15 @@ public class UserController  {
      * @return
      */
     @PutMapping(value="/{id}")
-    public Result<Integer> update(@PathVariable("id") String id,@RequestBody User user){
+    public Result<Integer> update(@PathVariable("id") String id,@RequestBody TenantUser user){
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            User tempUser = userServcie.findById(user.getId());
+            TenantUser tempUser = tenantUserServcie.findById(user.getId());
             if(!tempUser.getPassword().equals(user.getPassword())){
                 user.setPassword(MD5.encode(user.getUserName()+user.getPassword()));
             }
-            int count = userServcie.update(user);
+            int count = tenantUserServcie.update(user);
             if(count>0){
                 rcode = 0;
                 result.setData(count);
@@ -139,7 +145,7 @@ public class UserController  {
         Result<Integer> result = new Result<>();
         int rcode = -1;
         try{
-            int count = userServcie.destroy(id);
+            int count = tenantUserServcie.destroy(id);
             if(count>0){
                 rcode = 0;
             }else{
@@ -162,17 +168,22 @@ public class UserController  {
      * @return
      */
     @GetMapping(value="/userNameCheck")
-    public Result<Boolean> userNameCheck(UserVo vo){
+    public Result<Boolean> userNameCheck(UserVo vo,HttpServletRequest request){
             Result<Boolean> result = new Result<>();
             int rcode = -1;
             try{
-                List<User> users = userServcie.queryByParams(vo);
+                String token = request.getHeader("Authorization");
+                if(StringUtil.isPresent(token)) {
+                    String tenantId = TokenUtil.getTenantId(token);
+                    vo.setTenantId(tenantId);
+                }
+                List<TenantUser> users = tenantUserServcie.queryByParams(vo);
                 boolean state = false;
                 if(null==users || users.isEmpty()){
                     state = true;
                 }else{
                     if(StringUtil.isPresent(vo.getId())){
-                       User user = users.get(0);
+                       TenantUser user = users.get(0);
                        if(vo.getId().equals(user.getId())){
                            state = true;
                        }
@@ -194,7 +205,7 @@ public class UserController  {
      * @return
      */
     @PutMapping(value= "/profile")
-    public Result<Integer> updateProfile(@RequestBody User user, HttpServletRequest request){
+    public Result<Integer> updateProfile(@RequestBody TenantUser user, HttpServletRequest request){
 
         Result<Integer> result = new Result<>();
         int rcode = -1;
@@ -203,11 +214,11 @@ public class UserController  {
             if(StringUtil.isPresent(token)) {
                 String userId = TokenUtil.getUserId(token);
                 user.setId(userId);
-                User _user = userServcie.findById(userId);
+                TenantUser _user = tenantUserServcie.findById(userId);
                 if(StringUtil.isPresent(user.getPassword())){
                     user.setPassword(MD5.encode(_user.getUserName()+user.getPassword()));
                 }
-                int data = userServcie.update(user);
+                int data = tenantUserServcie.update(user);
                 if(data>0){
                     result.setData(data);
                     rcode = 0;

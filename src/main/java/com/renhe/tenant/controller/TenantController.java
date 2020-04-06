@@ -1,10 +1,12 @@
 package com.renhe.tenant.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
-import com.renhe.security.entity.User;
-import com.renhe.security.vo.UserVo;
+import com.renhe.service.VerifyService;
 import com.renhe.tenant.entity.Tenant;
 import com.renhe.tenant.service.TenantService;
 import com.renhe.tenant.vo.TenantVo;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @CrossOrigin
@@ -27,158 +30,61 @@ public class TenantController {
     @Autowired
     TenantService tenantService;
 
+    @Autowired
+    VerifyService verifyService;
 
 
-    /**
-     * 用户信息列表
-     * @param query
-     * @param pageNo
-     * @param pageSize
-     * @return
-     */
-    @GetMapping(value="/list")
-    public Result<PageInfo<Tenant>> index(TenantVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
-        Result<PageInfo<Tenant>> result = new Result<>();
-        int rcode = -1;
-        PageInfo<Tenant> tenantPageInfo = tenantService.queryPager(query,pageNo,pageSize);
-        if(null!=tenantPageInfo){
-            result.setData(tenantPageInfo);
-            rcode =  0 ;
-        }else{
-            result.setMessage("no record");
-        }
-        result.setCode(rcode);
-        return result;
-    }
 
     /**
-     * 创建租户信息
-     * @param tenant
+     * 获取租户的基本信息
      * @return
      */
-    @PostMapping("")
-    public Result<Integer> save(@RequestBody Tenant tenant){
-        Result<Integer> result = new Result<>();
+    @GetMapping(value="/info")
+    public Result<JSONObject> findById(HttpServletRequest request){
+        Result<JSONObject> result = new Result<>();
         int rcode = -1;
+        String tenantId = null;
         try{
-            tenantService.save(tenant);
-            rcode = 0;
-        }catch(Exception e){
-            result.setMessage(e.getMessage());
-            logger.error("[saveException]: tenant -> {}", JSON.toJSONString(tenant),e);
-        }
-        result.setCode(rcode);
-        return result;
-    }
-
-    /**
-     * 获取用户的基本信息
-     * @param id
-     * @return
-     */
-    @GetMapping(value="/{id}")
-    public Result<Tenant> findById(@PathVariable String id){
-        Result<Tenant> result = new Result<>();
-        int rcode = -1;
-        try{
-            Tenant tenant = tenantService.findById(id);
-            if(null!=tenant){
-                rcode = 0;
-                result.setData(tenant);
-                result.setMessage("success");
-            }else{
-                result.setMessage("tenant not exists.");
-            }
-        }catch(Exception e){
-            logger.error("[findTenantException]: id -> {}",id,e);
-        }
-        result.setCode(rcode);
-        return result;
-    }
-
-
-    /**
-     * 更新对象信息
-     * @param tenant
-     * @return
-     */
-    @PutMapping(value="/{id}")
-    public Result<Integer> update(@RequestBody Tenant tenant){
-        Result<Integer> result = new Result<>();
-        int rcode = -1;
-        try{
-            int count = tenantService.update(tenant);
-            if(count>0){
-                rcode = 0;
-                result.setData(count);
-                result.setMessage("success");
-            }else{
-                result.setMessage("tenant not exists");
-            }
-        }catch(Exception e){
-            logger.error("[updateException]: tenant -> {}",JSON.toJSONString(tenant),e);
-            result.setMessage(e.getMessage());
-        }
-        result.setCode(rcode);
-        return result;
-    }
-
-
-
-    /**
-     * 删除用户信息
-     * @param id
-     * @return
-     */
-    @DeleteMapping(value="/{id}")
-    public Result<Integer> destroy(@PathVariable String id){
-        Result<Integer> result = new Result<>();
-        int rcode = -1;
-        try{
-            int count = tenantService.destroy(id);
-            if(count>0){
-                rcode = 0;
-            }else{
-                result.setMessage("no record found");
-            }
-
-        }catch (Exception e){
-            result.setMessage(e.getMessage());
-            logger.error("[destroyException]: id -> {}", id,e);
-        }
-        result.setCode(rcode);
-        return result;
-
-    }
-
-    /**
-     * 验证用户名信息是否已经存在
-     *
-     * @return
-     */
-    @GetMapping(value="/tenantCodeCheck")
-    public Result<Boolean> tenantCodeCheck(TenantVo vo){
-        Result<Boolean> result = new Result<>();
-        int rcode = -1;
-        try{
-            List<Tenant> tenants = tenantService.queryByParams(vo);
-            boolean state = false;
-            if(null==tenants || tenants.isEmpty()){
-                state = true;
-            }else{
-                if(StringUtil.isPresent(vo.getId())){
-                    Tenant tenant = tenants.get(0);
-                    if(vo.getId().equals(tenant.getId())){
-                        state = true;
-                    }
+            String token = request.getHeader("Authorization");
+            if(StringUtil.isPresent(token)) {
+                tenantId = TokenUtil.getTenantId(token);
+                Tenant tenant = tenantService.findById(tenantId);
+                if(null!=tenant){
+                    JSONObject cache = tenantService.getTenantCache(tenantId);
+                    rcode = 0;
+                    JSONObject data = JSONObject.parseObject(JSON.toJSONString(tenant));
+                    data.putAll(cache);
+                    result.setData(data);
+                    result.setMessage("success");
+                }else{
+                    result.setMessage("tenant not exists.");
                 }
             }
-            result.setData(state);
-            rcode = 0;
 
-        }catch (Exception e){
+        }catch(Exception e){
+            logger.error("[findTenantException]: tenantId -> {}",tenantId,e);
+        }
+        result.setCode(rcode);
+        return result;
+    }
+
+
+    @GetMapping("/stat")
+    public Result<JSONArray> statAllByIp(HttpServletRequest request){
+        Result<JSONArray> result = new Result<>();
+        int rcode = -1;
+        try {
+            String token = request.getHeader("Authorization");
+            String ip = null;
+            if(StringUtil.isPresent(token)) {
+              String  tenantId = TokenUtil.getTenantId(token);
+              ip = tenantService.getTenantIp(tenantId);
+            }
+            JSONArray array = verifyService.statAllByDicName(ip);
+            result.setData(array);
+            rcode = 0;
+        }catch(Exception e){
             result.setMessage(e.getMessage());
-            logger.error("[tenantCodeCheckException]: vo -> {}",JSON.toJSONString(vo));
         }
         result.setCode(rcode);
         return result;

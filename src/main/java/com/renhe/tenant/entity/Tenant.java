@@ -91,6 +91,10 @@ public class Tenant implements Serializable {
      */
     private Long overdraft;
 
+    /**
+     * 实时账户余额
+     */
+    private Long rtFee;
 
     public String getId() {
         return id;
@@ -226,5 +230,13 @@ public class Tenant implements Serializable {
 
     public void setOverdraft(Long overdraft) {
         this.overdraft = overdraft;
+    }
+
+    public Long getRtFee() {
+        return rtFee;
+    }
+
+    public void setRtFee(Long rtFee) {
+        this.rtFee = rtFee;
     }
 }

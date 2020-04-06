@@ -1,5 +1,6 @@
 package com.renhe.tenant.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.renhe.tenant.entity.Tenant;
@@ -44,6 +45,11 @@ public class TenantService {
     public Tenant findById(String id){
         return tenantMapper.findById(id);
     }
+
+    public Tenant findByCode(String tenantCode){
+        return tenantMapper.findByCode(tenantCode);
+    }
+
 
     public int save(Tenant tenant){
         tenant.setId(IDUtil.generate());
@@ -97,6 +103,25 @@ public class TenantService {
         redisTemplate.delete(key);
 
 
+    }
+
+    public JSONObject getTenantCache(String tenantId){
+        JSONObject obj = new JSONObject();
+        String key =  Constant.ACC.ACC_PREFIX + tenantId;
+        Object _balance = redisTemplate.opsForHash().get(key,"balance");
+        long balance = 0l;
+        if(null!=_balance && StringUtil.isPresent(_balance.toString())){
+            balance = Long.parseLong(_balance.toString());
+        }
+        obj.put("rtBalance",balance);
+        return obj;
+    }
+
+
+    public String getTenantIp(String tenantId){
+        String key =  Constant.ACC.ACC_PREFIX + tenantId;
+        String ip = redisTemplate.opsForHash().get(key,"ip").toString();
+        return ip;
     }
 
 

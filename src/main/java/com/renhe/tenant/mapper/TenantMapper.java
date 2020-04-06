@@ -13,6 +13,8 @@ public interface TenantMapper {
 
     Tenant findById(String id);
 
+    Tenant findByCode(String tenantCode);
+
     int save(Tenant tenant);
 
     int update(Tenant tenant);

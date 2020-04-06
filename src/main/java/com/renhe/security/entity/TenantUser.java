@@ -10,11 +10,16 @@ import java.util.List;
 /**
  * 运营管理用户信息
  */
-public class User implements Serializable {
+public class TenantUser implements Serializable {
     /**
      * 主键
      */
     private String id;
+
+    /**
+     * 租户ID
+     */
+    private String tenantId;
 
     /**
      * 姓名
@@ -55,9 +60,6 @@ public class User implements Serializable {
      * 角色名称
      */
     private String role;
-
-    @Transient
-    private List<String> roleIds = new ArrayList<>();
 
 
     public String getId() {
@@ -132,11 +134,11 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public List<String> getRoleIds() {
-        return roleIds;
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setRoleIds(List<String> roleIds) {
-        this.roleIds = roleIds;
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

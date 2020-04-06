@@ -26,9 +26,19 @@ public class TenantTradeController {
     TenantTradeService tradeService;
 
     @GetMapping(value="/list")
-    public Result<PageInfo<TenantTrade>> index(TenantTradeVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
+    public Result<PageInfo<TenantTrade>> index(TenantTradeVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize,HttpServletRequest request){
         Result<PageInfo<TenantTrade>> result = new Result<>();
         int rcode = -1;
+        String token = request.getHeader("Authorization");
+        if(StringUtil.isPresent(token)) {
+            query.setTenantId(TokenUtil.getTenantId(token));
+        }
+        if(StringUtil.isPresent(query.getBeginAt())){
+            query.setBeginAt(query.getBeginAt()+" 00:00:00");
+        }
+        if(StringUtil.isPresent(query.getEndAt())){
+            query.setEndAt(query.getEndAt()+" 23:59:59");
+        }
         PageInfo<TenantTrade> tenantPageInfo = tradeService.queryPager(query,pageNo,pageSize);
         if(null!=tenantPageInfo){
             result.setData(tenantPageInfo);
@@ -40,22 +50,5 @@ public class TenantTradeController {
         return result;
     }
 
-    @PostMapping("")
-    public Result<Integer> save(@RequestBody TenantTrade tenantTrade, HttpServletRequest request){
-        Result<Integer> result = new Result<>();
-        int rcode = -1;
-        try{
-            String token = request.getHeader("Authorization");
-            if(StringUtil.isPresent(token)){
-                tenantTrade.setCreatorId(TokenUtil.getUserId(token));
-            }
-            tradeService.save(tenantTrade);
-            rcode = 0;
-        }catch(Exception e){
-            result.setMessage(e.getMessage());
-            logger.error("[saveException]: tenantTrade -> {}", JSON.toJSONString(tenantTrade),e);
-        }
-        result.setCode(rcode);
-        return result;
-    }
+
 }

@@ -11,6 +11,8 @@ public class UserDto implements Serializable {
 
     private String password;
 
+    private String tenantCode;
+
     public String getUserName() {
         return userName;
     }
@@ -25,5 +27,13 @@ public class UserDto implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTenantCode() {
+        return tenantCode;
+    }
+
+    public void setTenantCode(String tenantCode) {
+        this.tenantCode = tenantCode;
     }
 }

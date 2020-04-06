@@ -14,6 +14,15 @@
        where id = #{id}
     </select>
 
+    <select id="findByCode" parameterType="string" resultType="com.renhe.tenant.entity.Tenant">
+        select
+        <include refid="baseColumnSql"/>
+        from acc_tenant
+        where tenant_code = #{tenantCode}
+        and (status = 1 or status = 3)
+    </select>
+
+
 
     <select id="queryByParams" parameterType="com.renhe.tenant.vo.TenantVo" resultType="com.renhe.tenant.entity.Tenant" >
         select

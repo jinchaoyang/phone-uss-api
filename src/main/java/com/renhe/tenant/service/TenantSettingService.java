@@ -34,7 +34,7 @@ public class TenantSettingService {
 
     public int update(TenantSetting setting){
         TenantSetting _tmp = this.findById(setting.getId());
-        if(!_tmp.getPassword().equals(setting.getPassword())){
+        if(StringUtil.isPresent(_tmp.getPassword()) && !_tmp.getPassword().equals(setting.getPassword())){
             setting.setPassword(MD5.encode(setting.getUsername()+setting.getPassword()));
         }
         return mapper.update(setting);

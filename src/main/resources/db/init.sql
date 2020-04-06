@@ -158,6 +158,22 @@ create table usr_role(
 
 
 
+DROP TABLE usr_tenant_user;
+create table usr_tenant_user(
+ id varchar(32) not null comment '主键',
+ tenant_id varchar(32) not null comment '租户ID',
+ name varchar(16) default null comment '姓名',
+ user_name varchar(32) default null comment '用户名',
+ password varchar(64) default null comment '密码',
+ mobile varchar(12) default null comment '手机号',
+ status varchar(8) not null comment '状态,USE:可用,UNUSE: 不可用,LOCKED: 锁定 ',
+ role varchar(64) not null comment '角色，ADMIN：系统管理员,EMPLOYEE: 员工',
+ created_at timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
+ updated_at timestamp not null default current_timestamp on update CURRENT_TIMESTAMP comment '更新时间',
+ primary key(id)
+ )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+
 
 
 

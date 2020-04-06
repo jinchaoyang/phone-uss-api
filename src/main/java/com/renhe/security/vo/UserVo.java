@@ -11,6 +11,8 @@ public class UserVo implements Serializable {
 
     private String userName;
 
+    private String tenantId;
+
     public String getId() {
         return id;
     }
@@ -33,5 +35,13 @@ public class UserVo implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.renhe.security.mapper.TenantUserMapper" >
+
+    <sql id="baseColumnSql">
+        id,tenant_id,name,user_name,password,mobile,status,created_at,updated_at,role
+    </sql>
+
+    <select id="findByUserNameAndPassword" parameterType="map" resultType="com.renhe.security.entity.TenantUser" >
+       select
+       <include refid="baseColumnSql"/>
+       from usr_tenant_user
+        where tenant_id = #{tenantId}
+        and user_name = #{userName,jdbcType=VARCHAR}
+        and password = #{password}
+        and status = 'USE' limit 1
+    </select>
+
+
+    <select id="findById" parameterType="string" resultType="com.renhe.security.entity.TenantUser" >
+        select
+        <include refid="baseColumnSql"/>
+        from usr_tenant_user where id = #{id}
+    </select>
+
+
+    <select id="queryByParams" parameterType="com.renhe.security.vo.UserVo" resultType="com.renhe.security.entity.TenantUser" >
+        select
+        <include refid="baseColumnSql"/>
+        from usr_tenant_user  where  status = 'USE'
+        <if test="userName!='' and userName!=null">
+            and user_name = #{userName}
+        </if>
+        <if test="tenantId!='' and tenantId!=null">
+            and tenant_id = #{tenantId}
+        </if>
+        <if test="name!='' and name!=null">
+            and name like concat('%',#{name},'%')
+        </if>
+        order by  created_at desc
+    </select>
+
+    <insert id="save" parameterType="com.renhe.security.entity.TenantUser">
+         insert into usr_tenant_user
+         (
+            id,tenant_id,name,user_name,password,mobile,status,created_at,updated_at,role
+         )values(
+            #{id},
+            #{tenantId},
+            #{name},
+            #{userName},
+            #{password},
+            #{mobile},
+            #{status},
+            #{createdAt},
+            #{updatedAt},
+            #{role}
+         )
+    </insert>
+
+    <update id="destroy" parameterType="string">
+        update usr_tenant_user set status ='UNUSE' where id = #{id}
+    </update>
+
+    <update id="update" parameterType="com.renhe.security.entity.TenantUser">
+        update usr_tenant_user
+        <set>
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="password!=null">
+                password = #{password},
+            </if>
+            <if test="mobile!=null">
+                mobile = #{mobile},
+            </if>
+            <if test="role!=null">
+                role = #{role},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+
+
+
+</mapper>

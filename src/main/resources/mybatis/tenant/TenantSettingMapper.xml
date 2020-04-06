@@ -40,25 +40,25 @@
         update acc_tenant_setting
         <set>
             <if test="sipIp!=null">
-               sip_ip = #{sipIp}
+               sip_ip = #{sipIp},
             </if>
             <if test="sipPort!=null">
-                sip_port = #{sipPort}
+                sip_port = #{sipPort},
             </if>
             <if test="toIp!=null">
-                to_ip = #{toIp}
+                to_ip = #{toIp},
             </if>
             <if test="toPort!=null">
-                to_port = #{toPort}
+                to_port = #{toPort},
             </if>
             <if test="username!=null">
-                username = #{username}
+                username = #{username},
             </if>
             <if test="password!=null">
-                password = #{password}
+                password = #{password},
             </if>
             <if test="secretKey!=null">
-                secret_key = #{secretKey}
+                secret_key = #{secretKey},
             </if>
         </set>
         where id = #{id}

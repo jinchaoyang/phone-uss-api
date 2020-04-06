@@ -15,32 +15,25 @@
         <if test="tradeType!='' and tradeType!=null">
             and trade_type = #{tradeType}
         </if>
+        <if test="payType!='' and payType!=null">
+            and pay_type = #{payType}
+        </if>
+        <if test="resultType==1">
+            and trade_type in (1,3)
+        </if>
+        <if test="resultType==2">
+            and trade_type = 2
+        </if>
+        <if test="beginAt!=null">
+            and created_at &gt;= #{beginAt}
+        </if>
+        <if test="endAt!=null">
+            and created_at &lt;= #{endAt}
+        </if>
         order by created_at desc
     </select>
 
-    <insert id="save" parameterType="com.renhe.tenant.entity.TenantTrade">
-         insert into acc_tenant_trade
-         (
-            id,tenant_id,trade_type,amount,pay_type,note,creator_id,created_at
-         )values(
-            #{id},
-            #{tenantId},
-            #{tradeType},
-            #{amount},
-            #{payType},
-            #{note},
-            #{creatorId},
-            #{createdAt}
-         )
-    </insert>
 
-    <update id="charge" parameterType="java.util.Map">
-        update acc_tenant set balance = balance + #{amount} where id = #{tenantId}
-    </update>
-
-    <update id="consume" parameterType="java.util.Map">
-        update acc_tenant set balance = balance - #{amount} where id = #{tenantId}
-    </update>
 
 
 </mapper>

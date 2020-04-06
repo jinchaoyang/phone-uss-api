@@ -6,9 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.renhe.auth.utils.TokenUtil;
 import com.renhe.base.Result;
 import com.renhe.security.dto.UserDto;
-import com.renhe.security.entity.Resource;
-import com.renhe.security.entity.User;
-import com.renhe.security.service.UserServcie;
+import com.renhe.security.entity.TenantUser;
+import com.renhe.security.service.TenantUserServcie;
+import com.renhe.tenant.entity.Tenant;
+import com.renhe.tenant.service.TenantService;
 import com.renhe.utils.MD5;
 import com.renhe.utils.StringUtil;
 import org.slf4j.Logger;
@@ -17,10 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -30,7 +27,11 @@ public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
-    UserServcie userServcie;
+    TenantUserServcie tenantUserServcie;
+
+    @Autowired
+    TenantService tenantService;
+
     /**
      * 用户登录
      * @return
@@ -40,20 +41,35 @@ public class LoginController {
         Result<JSONObject> result = new Result<>();
         int rcode = -1;
         try {
-            String password = MD5.encode(userDto.getUserName() + userDto.getPassword());
-            User user = userServcie.findByUserNameAndPassword(userDto.getUserName(), password);
-            if (null != user) {
-                JSONObject obj = new JSONObject();
-                obj.put("id", user.getId());
-                obj.put("name", user.getName());
-                JSONObject json = new JSONObject();
-                json.put("id", user.getId());
-                obj.put("token", TokenUtil.createToken(json.toString(), 3600 * 24 * 1000));
-                rcode = 0;
-                result.setData(obj);
-            } else {
-                result.setMessage("用户名或密码错误");
+            String tenantCode = userDto.getTenantCode();
+            if(StringUtil.isPresent(tenantCode)){
+                Tenant tenant = tenantService.findByCode(tenantCode);
+                if(null==tenant){
+                    result.setMessage("企业不存在");
+                }else{
+                    String tenantId = tenant.getId();
+                    String password = MD5.encode(userDto.getUserName() + userDto.getPassword());
+                    TenantUser user = tenantUserServcie.findByUserNameAndPassword(userDto.getUserName(), password,tenantId);
+                    if (null != user) {
+                        JSONObject obj = new JSONObject();
+                        obj.put("id", user.getId());
+                        obj.put("name", user.getName());
+                        obj.put("tenantId",tenantId);
+                        obj.put("tenantType",tenant.getTenantType());
+                        JSONObject json = new JSONObject();
+                        json.put("id", user.getId());
+                        json.put("tenantId",tenantId);
+                        obj.put("token", TokenUtil.createToken(json.toString(), 3600 * 24 * 1000));
+                        rcode = 0;
+                        result.setData(obj);
+                    } else {
+                        result.setMessage("用户名或密码错误");
+                    }
+                }
+            }else{
+                result.setMessage("用户名格式不正确");
             }
+
         }catch (Exception e){
             logger.error("[Login]: userDto -> {} ",JSON.toJSONString(userDto),e);
             result.setMessage(e.getMessage());
@@ -62,48 +78,6 @@ public class LoginController {
         logger.info("[login]: userDto -> {}, result -> {}", JSON.toJSONString(userDto),JSON.toJSONString(result));
         return result;
     }
-
-    /**
-     * 获取用户权限信息
-     * @param request
-     * @return
-     */
-    @GetMapping(value="/permissions")
-    public Result<JSONArray> getPermissions(HttpServletRequest request){
-        Result<JSONArray>  result = new Result<>();
-        int rcode = -1;
-        String token = null;
-        try{
-            token = request.getHeader("Authorization");
-            if(StringUtil.isPresent(token)){
-                String userId = TokenUtil.getUserId(token);
-                if(StringUtil.isPresent(userId)) {
-                   Map<Resource, List<Resource>> menus =  userServcie.buildMenus(userId);
-                   JSONArray array  = new JSONArray();
-                   Set<Resource> keys = menus.keySet();
-                   JSONObject obj = null;
-                   for(Resource key : keys){
-                       obj = JSONObject.parseObject(JSON.toJSONString(key));
-                       obj.put("children",menus.getOrDefault(key,new ArrayList<>(0)));
-                       array.add(obj);
-                   }
-                   result.setData(array);
-                   rcode = 0;
-                }else{
-                    result.setMessage("token is invalid");
-                }
-            }else{
-                result.setMessage("token parameter can't be null");
-            }
-
-        }catch(Exception e){
-            logger.error("[getPermissions]: token -> {}",token,e);
-            result.setMessage(e.getMessage());
-        }
-        result.setCode(rcode);
-        return result;
-    }
-
 
 
     @PostMapping(value="/logout")
@@ -135,8 +109,8 @@ public class LoginController {
 
 
     @GetMapping(value="/info")
-    public Result<User> getUserInfo(HttpServletRequest request){
-        Result<User> result = new Result<>();
+    public Result<TenantUser> getUserInfo(HttpServletRequest request){
+        Result<TenantUser> result = new Result<>();
         int rcode = -1;
         String token = null;
         try{
@@ -144,7 +118,7 @@ public class LoginController {
             if(StringUtil.isPresent(token)){
                 String userId = TokenUtil.getUserId(token);
                 if(StringUtil.isPresent(userId)) {
-                    User user = userServcie.findById(userId);
+                    TenantUser user = tenantUserServcie.findById(userId);
                     result.setData(user);
                     rcode = 0;
                 }else{
