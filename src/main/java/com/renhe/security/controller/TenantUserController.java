@@ -37,9 +37,14 @@ public class TenantUserController {
      * @return
      */
     @GetMapping(value="/list")
-    public Result<PageInfo<TenantUser>> index(UserVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize){
+    public Result<PageInfo<TenantUser>> index(UserVo query, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize,HttpServletRequest request){
         Result<PageInfo<TenantUser>> result = new Result<>();
         int rcode = -1;
+        String token = request.getHeader("Authorization");
+        if(StringUtil.isPresent(token)) {
+            String tenantId = TokenUtil.getTenantId(token);
+            query.setTenantId(tenantId);
+        }
         PageInfo<TenantUser> userPageInfo = tenantUserServcie.queryPager(query,pageNo,pageSize);
         if(null!=userPageInfo){
             result.setData(userPageInfo);
