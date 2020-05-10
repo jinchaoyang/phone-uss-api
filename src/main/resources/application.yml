@@ -2,12 +2,18 @@ server:
   port: 13099
   servlet:
     context-path: /
+  undertow:
+    io-threads: 16
+    worker-threads: 256
+    buffer-size: 1024
+    direct-buffers: true
 spring:
   mvc:
     static-path-pattern: /static/**
   servlet:
     multipart:
-      max-file-size: 10MB
+      max-file-size: 50MB
+      max-request-size: 50MB
   redis:
     host: 127.0.0.1
     port: 6379
