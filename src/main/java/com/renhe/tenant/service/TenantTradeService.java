@@ -48,7 +48,7 @@ public class TenantTradeService {
         String tradeId = null;
         int result = 0;
         tenantTrade.setId(IDUtil.generate());
-        tenantTrade.setAmount(tenantTrade.getAmount()*10000);
+        tenantTrade.setAmount(tenantTrade.getAmount()*100000);
         result = mapper.save(tenantTrade);
         if(result>0){
             Map<String,Object> params = new HashMap<>();

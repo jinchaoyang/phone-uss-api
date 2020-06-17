@@ -32,5 +32,26 @@ public class FileUtil {
             bos.close();
         }
     }
+
+
+    public static long getLineNumbers(File sourceFile){
+        long total = 0l;
+        if(sourceFile.exists()){
+            try{
+                FileReader fileReader = new FileReader(sourceFile);
+                LineNumberReader lineNumberReader = new LineNumberReader(fileReader);
+                lineNumberReader.skip(Long.MAX_VALUE);
+                total = lineNumberReader.getLineNumber();
+                total = total+1;
+                lineNumberReader.close();
+                fileReader.close();
+
+            }catch(Exception e){
+
+                //donothing
+            }
+        }
+        return total;
+    }
 }
 

@@ -9,8 +9,6 @@ import com.renhe.tenant.vo.TenantProductVo;
 import com.renhe.utils.Constant;
 import com.renhe.utils.DateUtil;
 import com.renhe.utils.IDUtil;
-import org.apache.tomcat.util.bcel.Const;
-import org.bson.codecs.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -123,7 +121,7 @@ public class TenantProductService {
             LocalDateTime begin = DateUtil.getDateTime(beginAt,pattern);
             LocalDateTime end = DateUtil.plusMonths(begin,tenantProduct.getDuration());
             _product.setExpireAt(DateUtil.localDateTimeFormat(end,pattern));
-            BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(10000));
+            BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(100000));
             _product.setFee(bigDecimal.intValue());
 
             result = this.update(_product);
@@ -139,10 +137,10 @@ public class TenantProductService {
         int code = 0;
         Tenant tenant = tenantService.findById(tenantProduct.getTenantId());
         long total = tenant.getBalance()+tenant.getOverdraft();
-        BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(10000));
+        BigDecimal bigDecimal = new BigDecimal(tenantProduct.getFeeDesc()).multiply(new BigDecimal(100000));
         tenantProduct.setFee(bigDecimal.intValue());
-        tenantProduct.setDissipation(new BigDecimal(tenantProduct.getDissipationDesc()).multiply(new BigDecimal(10000)).longValue());
-        if(tenantProduct.getFeeType().equals("2") && total < 10*10000){ //按量计费,小于10元不能开通
+        tenantProduct.setDissipation(new BigDecimal(tenantProduct.getDissipationDesc()).multiply(new BigDecimal(100000)).longValue());
+        if(tenantProduct.getFeeType().equals("2") && total < 10*100000){ //按量计费,小于10元不能开通
             message = "账户可用余额必需大于10元";
             code = 1001;
         }else{
@@ -165,7 +163,7 @@ public class TenantProductService {
             }
             TenantTrade tradeLog = new TenantTrade();
             tradeLog.setCreatorId(tenantProduct.getCreatorId());
-            tradeLog.setAmount(amount/10000);
+            tradeLog.setAmount(amount/100000);
             tradeLog.setTenantId(tenantProduct.getTenantId());
             tradeLog.setTradeType("2");
             String tradeId = tradeService.save(tradeLog);
