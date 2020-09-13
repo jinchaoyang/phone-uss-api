@@ -40,7 +40,7 @@ public class AuthFilter implements Filter {
         if(StringUtil.isPresent(authorization) || Arrays.asList(WHITE_URLS).contains(url)  ){
             chain.doFilter(request,response);
         }else{
-          //  chain.doFilter(request,response);
+            chain.doFilter(request,response);
             Result<String> result = new Result<>();
             result.setCode(-1);
             result.setMessage("非法访问");
