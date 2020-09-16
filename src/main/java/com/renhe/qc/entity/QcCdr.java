@@ -100,6 +100,8 @@ public class QcCdr implements Serializable {
      */
     private String tenantId;
 
+    private long length;
+
 
     public String getId() {
         return id;
@@ -252,6 +254,14 @@ public class QcCdr implements Serializable {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public long getLength() {
+        return length;
+    }
+
+    public void setLength(long length) {
+        this.length = length;
     }
 }
 
