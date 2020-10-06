@@ -4,7 +4,7 @@
 
 
     <sql id="baseColumnSql">
-        id,sip_ip,sip_port,to_ip,to_port,username,password,secret_key
+        id,sip_ip,sip_port,to_ip,to_port,username,password,secret_key,local_port
     </sql>
 
     <select id="findById" parameterType="string" resultType="com.renhe.tenant.entity.TenantSetting" >

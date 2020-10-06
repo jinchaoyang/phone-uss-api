@@ -55,6 +55,8 @@ public class TenantSetting implements Serializable {
 
     private Date updatedAt;
 
+    private String localPort;
+
 
     public String getId() {
         return id;
@@ -134,5 +136,13 @@ public class TenantSetting implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getLocalPort() {
+        return localPort;
+    }
+
+    public void setLocalPort(String localPort) {
+        this.localPort = localPort;
     }
 }
